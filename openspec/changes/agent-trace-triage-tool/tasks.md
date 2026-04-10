@@ -44,6 +44,20 @@
 - [ ] 4.11 构造容错缺失样本：全部子 span OK 但整体超时（agent.dispatch 超时，子 span 耗时正常但总和超限 → agent 调度问题）
 - [ ] 4.12 构造多层级故障样本：MCP 间歇性失败+Agent 无 retry（mcp.call error + agent 无 fallback → primary: mcp, co: agent）
 
+## 4c. 样本 Trace — 核心边界场景（v1 讨论共识）
+
+- [ ] 4.13 构造无ERROR模式异常样本：Model tool_use 死循环（所有 span OK，但 gen_ai.client 重复调用同一 tool 5+ 次 → primary: model_team, co: agent_team 无断路器）
+- [ ] 4.14 构造非ERROR属性识别样本：Content Filter 拦截（gen_ai.response.finish_reasons=content_filter，span status=OK 但实质失败 → primary: model_team）
+- [ ] 4.15 构造参数溯源样本：Model 生成坏参数→MCP schema 失败（gen_ai.client OK 返回 tool_use 但参数不合 schema → mcp.call SchemaValidationError → primary: model_team, co: agent_team 无 pre-validation）
+- [ ] 4.16 构造配置归因样本：Agent 超时配置过短（Agent timeout=5s, MCP tool 正常运行 6s 被 cancel → primary: agent_team，非 mcp_team）
+- [ ] 4.17 构造隐藏故障样本：并发部分失败+Agent 吞错误（3 个并发 mcp.call，1 个 ERROR，Agent 静默忽略用 2 个结果拼输出，root span OK → primary: agent_team, co: mcp_team）
+
+## 4d. 样本 Trace — 扩展边界场景（v1.1）
+
+- [ ] 4.18 构造 Rate Limit 归因样本：区分 Model 服务侧限流 vs Agent 调用频率过高
+- [ ] 4.19 构造三层依赖链样本：Skill→MCP→外部 API 三层错误冒泡归因
+- [ ] 4.20 构造语义错误样本：mcp.call status=OK 但返回值含 error_code，导致上游解析失败
+
 ## 5. API 接口
 
 - [ ] 5.1 实现 POST /api/trace/upload
