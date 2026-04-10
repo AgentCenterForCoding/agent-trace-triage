@@ -1,5 +1,8 @@
 ---
+name: "OPSX: 提案"
 description: 提案新变更 - 一步创建并生成所有产出物
+category: 工作流
+tags: [workflow, artifacts, experimental]
 ---
 
 提案新变更 - 一步创建变更并生成所有产出物。
@@ -9,11 +12,11 @@ description: 提案新变更 - 一步创建并生成所有产出物
 - design.md（如何）
 - tasks.md（实现步骤）
 
-准备好实现后，运行 /opsx-apply
+准备好实现后，运行 /opsx:apply
 
 ---
 
-**输入**：`/opsx-propose` 之后的参数是变更名称（kebab-case），或用户想要构建内容的描述。
+**输入**：`/opsx:propose` 之后的参数是变更名称（kebab-case），或用户想要构建内容的描述。
 
 **步骤**
 
@@ -83,7 +86,7 @@ description: 提案新变更 - 一步创建并生成所有产出物
 - 变更名称和位置
 - 已创建产出物的列表及简要描述
 - 准备就绪："所有产出物已创建！准备好实现。"
-- 提示："运行 `/opsx-apply` 开始实现。"
+- 提示："运行 `/opsx:apply` 开始实现。"
 
 **产出物创建指南**
 
