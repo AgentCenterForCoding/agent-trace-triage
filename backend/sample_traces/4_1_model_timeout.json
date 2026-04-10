@@ -1,0 +1,77 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "27ef3e3a8a43c29b2e8386c11fda1764",
+              "spanId": "d0e358342b586d6b",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000030500000000",
+              "status": {
+                "code": 2,
+                "message": "Downstream timeout"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "27ef3e3a8a43c29b2e8386c11fda1764",
+              "spanId": "11feb672771a69ca",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000030100000000",
+              "status": {
+                "code": 2,
+                "message": "TimeoutError: Request timed out after 30s"
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.system",
+                  "value": {
+                    "stringValue": "anthropic"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "claude-opus-4-6"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "TimeoutError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "d0e358342b586d6b"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

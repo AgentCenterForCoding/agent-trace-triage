@@ -1,0 +1,362 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "0810d53324e5590f",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000036000000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "agent.steps",
+                  "value": {
+                    "intValue": "6"
+                  }
+                }
+              ],
+              "events": []
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "56a332af281857e9",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "b43d27188340bd68",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000002600000000",
+              "endTimeUnixNano": "1700000005600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "3fadf615a2867b08",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000006100000000",
+              "endTimeUnixNano": "1700000008100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "f2428d25c0450497",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000008600000000",
+              "endTimeUnixNano": "1700000011600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "e961070a286dc49c",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000012100000000",
+              "endTimeUnixNano": "1700000014100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "81c070ff1154866a",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000014600000000",
+              "endTimeUnixNano": "1700000017600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "f43fd6e983ee1166",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000018100000000",
+              "endTimeUnixNano": "1700000020100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "fbe3025d740f2cec",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000020600000000",
+              "endTimeUnixNano": "1700000023600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "39506737ec842810",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000024100000000",
+              "endTimeUnixNano": "1700000026100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "a98cf486a367117a",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000026600000000",
+              "endTimeUnixNano": "1700000029600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "8dfee9002358244e",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000030100000000",
+              "endTimeUnixNano": "1700000032100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.tool_name",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            },
+            {
+              "traceId": "43b5d5f0cfb1a94d5524452c6c9dbf50",
+              "spanId": "6bc95145ee32b191",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000032600000000",
+              "endTimeUnixNano": "1700000035600000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "0810d53324e5590f"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

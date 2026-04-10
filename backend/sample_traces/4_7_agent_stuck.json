@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
+              "spanId": "7f67404c00b3609b",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000060000000000",
+              "status": {
+                "code": 2,
+                "message": "TimeoutError: Agent dispatch exceeded 60s limit"
+              },
+              "attributes": [
+                {
+                  "key": "agent.state",
+                  "value": {
+                    "stringValue": "waiting"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "TimeoutError"
+                  }
+                }
+              ],
+              "events": []
+            },
+            {
+              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
+              "spanId": "a7d5ccc54fb75b53",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000003100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "end_turn"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "7f67404c00b3609b"
+            },
+            {
+              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
+              "spanId": "b4d15dd370818335",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000003500000000",
+              "endTimeUnixNano": "1700000005500000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "read_file"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "7f67404c00b3609b"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

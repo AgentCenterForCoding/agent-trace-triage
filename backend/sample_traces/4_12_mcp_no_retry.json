@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
+              "spanId": "c620d353d3a9528d",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000005000000000",
+              "status": {
+                "code": 2,
+                "message": "Tool execution failed"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
+              "spanId": "885eebc645e717af",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "c620d353d3a9528d"
+            },
+            {
+              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
+              "spanId": "195ff61e1614465e",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000002300000000",
+              "endTimeUnixNano": "1700000004300000000",
+              "status": {
+                "code": 2,
+                "message": "ServerError: 503 Service temporarily unavailable"
+              },
+              "attributes": [
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                },
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "create_pull_request"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "ServerError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "c620d353d3a9528d"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

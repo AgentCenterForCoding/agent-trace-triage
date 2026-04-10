@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "a90abfe5b4084682beb870a156272c2f",
+              "spanId": "ea431a5036ece15d",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000004500000000",
+              "status": {
+                "code": 2,
+                "message": "Tool execution failed"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "a90abfe5b4084682beb870a156272c2f",
+              "spanId": "f3e5b31bc01f353c",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "ea431a5036ece15d"
+            },
+            {
+              "traceId": "a90abfe5b4084682beb870a156272c2f",
+              "spanId": "b350e585bf760a4a",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000002200000000",
+              "endTimeUnixNano": "1700000004200000000",
+              "status": {
+                "code": 2,
+                "message": "ServerError: Internal server error in tool 'search_code'"
+              },
+              "attributes": [
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "github"
+                  }
+                },
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "search_code"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "ServerError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "ea431a5036ece15d"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

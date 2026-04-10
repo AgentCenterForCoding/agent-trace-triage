@@ -1,0 +1,104 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "6bcdd81dbd2481d614f26c7489842098",
+              "spanId": "799267cd1e561fea",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000005500000000",
+              "status": {
+                "code": 2,
+                "message": "Tool call timed out"
+              },
+              "attributes": [
+                {
+                  "key": "agent.timeout_ms",
+                  "value": {
+                    "intValue": "5000"
+                  }
+                }
+              ],
+              "events": []
+            },
+            {
+              "traceId": "6bcdd81dbd2481d614f26c7489842098",
+              "spanId": "0100277b2f742727",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "799267cd1e561fea"
+            },
+            {
+              "traceId": "6bcdd81dbd2481d614f26c7489842098",
+              "spanId": "ee90ca009c2f4406",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000002300000000",
+              "endTimeUnixNano": "1700000008300000000",
+              "status": {
+                "code": 2,
+                "message": "CancelledError: Operation cancelled by caller after 6000ms"
+              },
+              "attributes": [
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "code-search"
+                  }
+                },
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "semantic_search"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "CancelledError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "799267cd1e561fea"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

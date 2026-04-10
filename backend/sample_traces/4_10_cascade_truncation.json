@@ -1,0 +1,115 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
+              "spanId": "6d64b8a508555069",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000006000000000",
+              "status": {
+                "code": 2,
+                "message": "Parse error"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
+              "spanId": "3da4eb3215f1a867",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000004100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.system",
+                  "value": {
+                    "stringValue": "anthropic"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "claude-opus-4-6"
+                  }
+                },
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "max_tokens"
+                  }
+                },
+                {
+                  "key": "gen_ai.usage.output_tokens",
+                  "value": {
+                    "intValue": "4096"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.max_tokens",
+                  "value": {
+                    "intValue": "4096"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "6d64b8a508555069"
+            },
+            {
+              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
+              "spanId": "97750656e29b0406",
+              "name": "agent.parse",
+              "startTimeUnixNano": "1700000004200000000",
+              "endTimeUnixNano": "1700000004250000000",
+              "status": {
+                "code": 2,
+                "message": "JSON parse error: Unexpected end of input"
+              },
+              "attributes": [
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "JSONDecodeError"
+                  }
+                },
+                {
+                  "key": "error.message",
+                  "value": {
+                    "stringValue": "JSON parse error: Unexpected end of input"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "6d64b8a508555069"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "66156c8745efc5fe9a86ebf2455efad3",
+              "spanId": "a47471106e4e5bec",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000000500000000",
+              "status": {
+                "code": 2,
+                "message": "Skill not found"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "66156c8745efc5fe9a86ebf2455efad3",
+              "spanId": "287d5fb93295814d",
+              "name": "skill.load",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000000150000000",
+              "status": {
+                "code": 2,
+                "message": "SkillNotFoundError: Skill 'nonexistent-skill' not found"
+              },
+              "attributes": [
+                {
+                  "key": "skill.name",
+                  "value": {
+                    "stringValue": "nonexistent-skill"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "SkillNotFoundError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "a47471106e4e5bec"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

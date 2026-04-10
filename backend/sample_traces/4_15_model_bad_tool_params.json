@@ -1,0 +1,109 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "7d209ac5c8e04cc9b691cce4500c62c0",
+              "spanId": "b1aba6dbbb910f5e",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000005000000000",
+              "status": {
+                "code": 2,
+                "message": "Tool schema validation failed"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "7d209ac5c8e04cc9b691cce4500c62c0",
+              "spanId": "f7fef4c6b1fa54ca",
+              "name": "gen_ai.client",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000003100000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "gen_ai.system",
+                  "value": {
+                    "stringValue": "anthropic"
+                  }
+                },
+                {
+                  "key": "gen_ai.response.finish_reasons",
+                  "value": {
+                    "stringValue": "tool_use"
+                  }
+                },
+                {
+                  "key": "gen_ai.response.tool_calls",
+                  "value": {
+                    "intValue": "1"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "b1aba6dbbb910f5e"
+            },
+            {
+              "traceId": "7d209ac5c8e04cc9b691cce4500c62c0",
+              "spanId": "fe057b055128c078",
+              "name": "mcp.call",
+              "startTimeUnixNano": "1700000003300000000",
+              "endTimeUnixNano": "1700000003400000000",
+              "status": {
+                "code": 2,
+                "message": "SchemaValidationError: Parameter 'file_path' expected string, got integer"
+              },
+              "attributes": [
+                {
+                  "key": "mcp.server",
+                  "value": {
+                    "stringValue": "filesystem"
+                  }
+                },
+                {
+                  "key": "mcp.tool",
+                  "value": {
+                    "stringValue": "write_file"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "SchemaValidationError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "b1aba6dbbb910f5e"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

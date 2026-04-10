@@ -1,0 +1,91 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "opencode-agent"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "0.5.0"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "agent-trace-triage-samples"
+          },
+          "spans": [
+            {
+              "traceId": "4f3924b90760dd83c2dd9e4bc5ddd856",
+              "spanId": "f513c2b7fa331daa",
+              "name": "agent.dispatch",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000006000000000",
+              "status": {
+                "code": 2,
+                "message": "Skill execution failed"
+              },
+              "attributes": [],
+              "events": []
+            },
+            {
+              "traceId": "4f3924b90760dd83c2dd9e4bc5ddd856",
+              "spanId": "48ea500795bb0f73",
+              "name": "skill.load",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000000300000000",
+              "status": {
+                "code": 1
+              },
+              "attributes": [
+                {
+                  "key": "skill.name",
+                  "value": {
+                    "stringValue": "tdd"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "f513c2b7fa331daa"
+            },
+            {
+              "traceId": "4f3924b90760dd83c2dd9e4bc5ddd856",
+              "spanId": "00c8376c987bac0a",
+              "name": "skill.execute",
+              "startTimeUnixNano": "1700000000400000000",
+              "endTimeUnixNano": "1700000005400000000",
+              "status": {
+                "code": 2,
+                "message": "RuntimeError: Test runner crashed"
+              },
+              "attributes": [
+                {
+                  "key": "skill.name",
+                  "value": {
+                    "stringValue": "tdd"
+                  }
+                },
+                {
+                  "key": "error.type",
+                  "value": {
+                    "stringValue": "RuntimeError"
+                  }
+                }
+              ],
+              "events": [],
+              "parentSpanId": "f513c2b7fa331daa"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

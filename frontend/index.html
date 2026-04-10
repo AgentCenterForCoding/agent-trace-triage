@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Trace Triage</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #58a6ff; margin-bottom: 8px; font-size: 24px; }
+        .subtitle { color: #8b949e; margin-bottom: 24px; font-size: 14px; }
+
+        /* Controls */
+        .controls { display: flex; gap: 16px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+        select, button { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        select:hover, button:hover { border-color: #58a6ff; }
+        button.primary { background: #238636; border-color: #238636; color: #fff; }
+        button.primary:hover { background: #2ea043; }
+        .file-input { display: none; }
+        .upload-label { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; display: inline-block; }
+        .upload-label:hover { border-color: #58a6ff; }
+
+        /* Triage Result Card */
+        .triage-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+        .triage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .owner-badge { padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+        .owner-badge.agent_team { background: #388bfd33; color: #58a6ff; border: 1px solid #388bfd66; }
+        .owner-badge.model_team { background: #a371f733; color: #bc8cff; border: 1px solid #a371f766; }
+        .owner-badge.mcp_team { background: #f7883133; color: #f0883e; border: 1px solid #f7883166; }
+        .owner-badge.skill_team { background: #3fb95033; color: #56d364; border: 1px solid #3fb95066; }
+        .owner-badge.unknown { background: #8b949e33; color: #8b949e; border: 1px solid #8b949e66; }
+        .confidence-bar { flex: 1; max-width: 200px; }
+        .confidence-bar .bar-bg { background: #21262d; border-radius: 4px; height: 8px; }
+        .confidence-bar .bar-fill { border-radius: 4px; height: 8px; transition: width 0.3s; }
+        .confidence-bar .bar-label { font-size: 12px; color: #8b949e; margin-top: 4px; }
+        .co-responsible { display: flex; gap: 8px; margin-top: 8px; }
+        .co-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; background: #21262d; border: 1px solid #30363d; }
+        .root-cause { background: #21262d; border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 13px; line-height: 1.5; }
+
+        /* Waterfall */
+        .waterfall { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+        .waterfall h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
+        .span-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #21262d; font-size: 13px; }
+        .span-row:last-child { border-bottom: none; }
+        .span-indent { display: inline-block; }
+        .span-name { min-width: 250px; font-family: monospace; white-space: nowrap; }
+        .span-name.error { color: #f85149; }
+        .span-name.anomaly { color: #d29922; }
+        .span-name.ok { color: #56d364; }
+        .span-name.root-cause-span { background: #f8514922; padding: 2px 6px; border-radius: 3px; border: 1px solid #f8514944; }
+        .span-layer { min-width: 80px; text-align: center; }
+        .span-layer span { padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+        .layer-agent { background: #388bfd22; color: #58a6ff; }
+        .layer-model { background: #a371f722; color: #bc8cff; }
+        .layer-mcp { background: #f7883122; color: #f0883e; }
+        .layer-skill { background: #3fb95022; color: #56d364; }
+        .layer-unknown { background: #8b949e22; color: #8b949e; }
+        .span-duration { min-width: 80px; text-align: right; color: #8b949e; font-family: monospace; }
+        .span-bar-container { flex: 1; padding: 0 12px; }
+        .span-bar { height: 6px; border-radius: 3px; min-width: 2px; }
+        .span-bar.error { background: #f85149; }
+        .span-bar.ok { background: #388bfd; }
+        .span-bar.anomaly { background: #d29922; }
+
+        /* Evidence Chain */
+        .evidence { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+        .evidence h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
+        .chain-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
+        .chain-arrow { color: #f85149; font-size: 18px; min-width: 20px; text-align: center; padding-top: 2px; }
+        .chain-content { font-size: 13px; }
+        .chain-content .span-ref { font-family: monospace; color: #58a6ff; }
+
+        /* Action Items */
+        .actions { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+        .actions h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
+        .action-item { padding: 8px 12px; background: #21262d; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+        .action-team { font-weight: 600; color: #58a6ff; }
+
+        .empty-state { text-align: center; color: #8b949e; padding: 60px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agent Trace Triage</h1>
+        <p class="subtitle">OTel Trace-based fault attribution for Agent debugging</p>
+
+        <div class="controls">
+            <select id="sampleSelect">
+                <option value="">-- Select sample trace --</option>
+            </select>
+            <button class="primary" onclick="analyzeSample()">Analyze</button>
+            <span style="color: #30363d">|</span>
+            <label class="upload-label" for="fileInput">Upload Trace JSON</label>
+            <input type="file" id="fileInput" class="file-input" accept=".json" onchange="uploadFile(event)">
+        </div>
+
+        <div id="results">
+            <div class="empty-state">Select a sample trace or upload a JSON file to start analysis</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '';  // Same origin
+
+        // Load samples on startup
+        async function loadSamples() {
+            try {
+                const res = await fetch(`${API}/api/samples`);
+                const samples = await res.json();
+                const select = document.getElementById('sampleSelect');
+                samples.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.name;
+                    opt.textContent = s.name.replace(/_/g, ' ');
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Failed to load samples:', e);
+            }
+        }
+
+        async function analyzeSample() {
+            const name = document.getElementById('sampleSelect').value;
+            if (!name) return alert('Please select a sample');
+            try {
+                const res = await fetch(`${API}/api/samples/${name}`);
+                const data = await res.json();
+                renderResults(data);
+            } catch (e) {
+                console.error('Analysis failed:', e);
+                alert('Analysis failed: ' + e.message);
+            }
+        }
+
+        async function uploadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const res = await fetch(`${API}/api/trace/upload`, { method: 'POST', body: formData });
+                const data = await res.json();
+                renderResults(data);
+            } catch (e) {
+                console.error('Upload failed:', e);
+                alert('Upload failed: ' + e.message);
+            }
+        }
+
+        function renderResults(data) {
+            const container = document.getElementById('results');
+            const t = data.triage;
+            const spans = data.spans || [];
+            const faultSpanId = t.fault_span ? t.fault_span.span_id : null;
+
+            // Sort spans for waterfall: by start_time, then by depth
+            spans.sort((a, b) => a.start_time_unix_nano - b.start_time_unix_nano);
+
+            // Find time range for waterfall bars
+            let minTime = Infinity, maxTime = 0;
+            spans.forEach(s => {
+                if (s.start_time_unix_nano < minTime) minTime = s.start_time_unix_nano;
+                if (s.end_time_unix_nano > maxTime) maxTime = s.end_time_unix_nano;
+            });
+            const totalRange = maxTime - minTime || 1;
+
+            // Confidence color
+            const confPct = Math.round(t.confidence * 100);
+            const confColor = confPct >= 70 ? '#56d364' : confPct >= 40 ? '#d29922' : '#f85149';
+
+            let html = '';
+
+            // Triage Result Card
+            html += `<div class="triage-card">
+                <div class="triage-header">
+                    <span class="owner-badge ${t.primary_owner}">Primary: ${t.primary_owner}</span>
+                    <div class="confidence-bar">
+                        <div class="bar-bg"><div class="bar-fill" style="width:${confPct}%;background:${confColor}"></div></div>
+                        <div class="bar-label">Confidence: ${confPct}%</div>
+                    </div>
+                </div>`;
+
+            if (t.co_responsible && t.co_responsible.length > 0) {
+                html += `<div>Co-responsible:</div><div class="co-responsible">`;
+                t.co_responsible.forEach(co => {
+                    html += `<span class="co-badge">${co}</span>`;
+                });
+                html += `</div>`;
+            }
+
+            html += `<div class="root-cause">${escapeHtml(t.root_cause)}</div>`;
+            html += `</div>`;
+
+            // Waterfall
+            if (spans.length > 0) {
+                html += `<div class="waterfall"><h2>Trace Waterfall (${spans.length} spans)</h2>`;
+                spans.forEach(s => {
+                    const depth = s.depth || 0;
+                    const indent = depth * 20;
+                    const isError = s.status === 'ERROR';
+                    const isAnomaly = !isError && (
+                        (s.attributes && (s.attributes['gen_ai.response.finish_reasons'] === 'content_filter' ||
+                         s.attributes['gen_ai.response.finish_reasons'] === 'max_tokens'))
+                    );
+                    const isFault = s.span_id === faultSpanId;
+                    const statusClass = isError ? 'error' : isAnomaly ? 'anomaly' : 'ok';
+                    const faultClass = isFault ? ' root-cause-span' : '';
+                    const layerClass = `layer-${s.layer}`;
+                    const barLeft = ((s.start_time_unix_nano - minTime) / totalRange * 100).toFixed(1);
+                    const barWidth = Math.max(((s.end_time_unix_nano - s.start_time_unix_nano) / totalRange * 100), 0.5).toFixed(1);
+                    const durationMs = s.duration_ms.toFixed(0);
+
+                    html += `<div class="span-row">
+                        <div class="span-name ${statusClass}${faultClass}" style="padding-left:${indent}px">
+                            ${isFault ? '&#9654; ' : ''}${escapeHtml(s.name)}
+                        </div>
+                        <div class="span-layer"><span class="${layerClass}">${s.layer}</span></div>
+                        <div class="span-bar-container">
+                            <div class="span-bar ${statusClass}" style="margin-left:${barLeft}%;width:${barWidth}%"></div>
+                        </div>
+                        <div class="span-duration">${durationMs}ms</div>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+
+            // Evidence Chain
+            if (t.fault_chain && t.fault_chain.length > 0) {
+                html += `<div class="evidence"><h2>Evidence Chain</h2>`;
+                t.fault_chain.forEach((s, i) => {
+                    const arrow = i === 0 ? '&#9679;' : '&#8593;';
+                    const label = i === 0 ? 'ROOT CAUSE' : `Level ${i}`;
+                    html += `<div class="chain-item">
+                        <div class="chain-arrow">${arrow}</div>
+                        <div class="chain-content">
+                            <strong>${label}</strong><br>
+                            <span class="span-ref">${escapeHtml(s.name)}</span>
+                            [${s.layer}] — ${s.status}
+                            ${s.status_message ? '<br>' + escapeHtml(s.status_message) : ''}
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+
+            // Action Items
+            if (t.action_items && t.action_items.length > 0) {
+                html += `<div class="actions"><h2>Action Items</h2>`;
+                t.action_items.forEach(item => {
+                    const teamMatch = item.match(/^\[([^\]]+)\]/);
+                    const team = teamMatch ? teamMatch[1] : '';
+                    const text = teamMatch ? item.slice(teamMatch[0].length).trim() : item;
+                    html += `<div class="action-item">
+                        ${team ? `<span class="action-team">[${team}]</span> ` : ''}${escapeHtml(text)}
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        loadSamples();
+    </script>
+</body>
+</html>
