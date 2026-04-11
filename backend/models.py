@@ -79,8 +79,29 @@ class TriageResult(BaseModel):
 
 
 def identify_span_layer(span_name: str) -> SpanLayer:
-    """Identify span layer based on naming convention."""
+    """Identify span layer based on naming convention.
+
+    Supports two naming conventions:
+    1. Prefix-based: agent.*, llm.*/gen_ai.*, mcp.*, skill.*
+    2. OpenCode trace: turn, agent_run, model_inference, tool_call, user_approval
+    """
     name_lower = span_name.lower()
+
+    # OpenCode trace span names (exact match)
+    opencode_agent_spans = {"turn", "agent_run", "user_approval", "direct_execution"}
+    opencode_model_spans = {"model_inference"}
+    opencode_tool_span = "tool_call"  # Requires attribute check for tool_type
+
+    if name_lower in opencode_agent_spans:
+        return SpanLayer.AGENT
+    elif name_lower in opencode_model_spans:
+        return SpanLayer.MODEL
+    elif name_lower == opencode_tool_span:
+        # tool_call layer depends on tool_type attribute, default to AGENT
+        # Actual layer will be determined by triage engine using attributes
+        return SpanLayer.UNKNOWN
+
+    # Prefix-based naming convention
     if name_lower.startswith("agent."):
         return SpanLayer.AGENT
     elif name_lower.startswith(("llm.", "gen_ai.")):
@@ -89,6 +110,7 @@ def identify_span_layer(span_name: str) -> SpanLayer:
         return SpanLayer.MCP
     elif name_lower.startswith("skill."):
         return SpanLayer.SKILL
+
     return SpanLayer.UNKNOWN
 
 
@@ -102,3 +124,26 @@ def layer_to_owner(layer: SpanLayer) -> OwnerTeam:
         SpanLayer.UNKNOWN: OwnerTeam.UNKNOWN,
     }
     return mapping.get(layer, OwnerTeam.UNKNOWN)
+
+
+def get_effective_layer(span: "OTelSpan") -> SpanLayer:
+    """Get the effective layer for a span, considering tool_type attribute.
+
+    For tool_call spans, the layer depends on the tool_type attribute:
+    - mcp → MCP layer
+    - builtin → AGENT layer
+    - skill → SKILL layer
+
+    For other spans, returns the layer computed from span name.
+    """
+    if span.name.lower() == "tool_call":
+        tool_type = span.get_attr("tool_type", "").lower()
+        if tool_type == "mcp":
+            return SpanLayer.MCP
+        elif tool_type == "skill":
+            return SpanLayer.SKILL
+        elif tool_type == "builtin":
+            return SpanLayer.AGENT
+        # Default to UNKNOWN if tool_type not specified
+        return SpanLayer.UNKNOWN
+    return span.layer

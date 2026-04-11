@@ -13,6 +13,7 @@ from models import (
     SpanLayer,
     SpanTree,
     TriageResult,
+    get_effective_layer,
     layer_to_owner,
 )
 
@@ -300,12 +301,17 @@ def _find_anomaly_spans(tree: SpanTree) -> list[OTelSpan]:
     for span in tree.spans.values():
         if span.status.value == "ERROR":
             continue
-        # Check for content filter
-        finish_reasons = span.get_attr("gen_ai.response.finish_reasons")
+        # Check for content filter / max_tokens
+        # Support both naming conventions:
+        # 1. gen_ai.response.finish_reasons (OTel semantic convention)
+        # 2. finish_reasons (OpenCode trace)
+        finish_reasons = (
+            span.get_attr("gen_ai.response.finish_reasons") or
+            span.get_attr("finish_reasons")
+        )
         if finish_reasons in ("content_filter", ["content_filter"]):
             anomalies.append(span)
-        # Check for max_tokens truncation
-        if finish_reasons in ("max_tokens", ["max_tokens"]):
+        elif finish_reasons in ("max_tokens", ["max_tokens"]):
             anomalies.append(span)
     return anomalies
 
@@ -314,8 +320,23 @@ def _detect_loop_pattern(tree: SpanTree) -> Optional[OTelSpan]:
     """Detect tool_use loop pattern: same tool called 5+ times with OK status."""
     tool_calls: dict[str, list[OTelSpan]] = {}
     for span in tree.spans.values():
-        if _match_pattern(span.name, "mcp.*") or _match_pattern(span.name, "gen_ai.*"):
-            tool_name = span.get_attr("mcp.tool") or span.get_attr("gen_ai.request.model") or span.name
+        # Match both naming conventions:
+        # 1. Prefix-based: mcp.*, gen_ai.*
+        # 2. OpenCode trace: tool_call, model_inference
+        is_tool_span = (
+            _match_pattern(span.name, "mcp.*") or
+            _match_pattern(span.name, "gen_ai.*") or
+            span.name.lower() in ("tool_call", "model_inference")
+        )
+        if is_tool_span:
+            # Get tool identifier from attributes
+            tool_name = (
+                span.get_attr("function_name") or  # OpenCode tool_call
+                span.get_attr("mcp.tool") or
+                span.get_attr("gen_ai.request.model") or
+                span.get_attr("model") or  # OpenCode model_inference
+                span.name
+            )
             tool_calls.setdefault(str(tool_name), []).append(span)
 
     for tool_name, spans in tool_calls.items():
@@ -377,7 +398,8 @@ def layer2_upstream_propagation(
         if not shifted and parent.parent_span_id:
             siblings = _get_related_spans(current, tree, "sibling")
             for sib in siblings:
-                finish = sib.get_attr("gen_ai.response.finish_reasons")
+                # Support both attribute naming conventions
+                finish = sib.get_attr("gen_ai.response.finish_reasons") or sib.get_attr("finish_reasons")
                 if finish in ("max_tokens", ["max_tokens"]):
                     reasons.append(
                         f"Sibling span '{sib.name}' had finish_reason=max_tokens (output truncated)"
@@ -390,7 +412,8 @@ def layer2_upstream_propagation(
         if not shifted:
             ancestors = _get_related_spans(current, tree, "ancestor")
             for anc in ancestors:
-                finish = anc.get_attr("gen_ai.response.finish_reasons")
+                # Support both attribute naming conventions
+                finish = anc.get_attr("gen_ai.response.finish_reasons") or anc.get_attr("finish_reasons")
                 if finish in ("max_tokens", ["max_tokens"]):
                     reasons.append(
                         f"Ancestor span '{anc.name}' had finish_reason=max_tokens (output truncated)"
@@ -400,7 +423,7 @@ def layer2_upstream_propagation(
                     break
 
         # Check: Agent timeout too short (cancel vs real timeout)
-        if not shifted and current.layer == SpanLayer.MCP:
+        if not shifted and get_effective_layer(current) == SpanLayer.MCP:
             agent_timeout = parent.get_attr("agent.timeout_ms")
             if agent_timeout and current.duration_ms > 0:
                 error_type = current.get_attr("error.type", current.status_message or "")
@@ -431,13 +454,13 @@ def layer3_tolerance_analysis(
     co_responsible: list[OwnerTeam] = []
 
     # If root cause is not in Agent layer, check if Agent had retry/fallback
-    if root_cause.layer != SpanLayer.AGENT:
+    if get_effective_layer(root_cause) != SpanLayer.AGENT:
         # Walk up to find the enclosing Agent span
         agent_span = None
         current = root_cause
         while current.parent_span_id and current.parent_span_id in tree.spans:
             parent = tree.spans[current.parent_span_id]
-            if parent.layer == SpanLayer.AGENT:
+            if get_effective_layer(parent) == SpanLayer.AGENT:
                 agent_span = parent
                 break
             current = parent
@@ -626,10 +649,11 @@ def triage(tree: SpanTree, rules: list[TriageRule]) -> TriageResult:
         rule_confidence = matched_rule.confidence
         reason_text = matched_rule.reason or f"Matched rule: {matched_rule.span_pattern}"
     else:
-        primary = layer_to_owner(root_cause_span.layer)
+        effective_layer = get_effective_layer(root_cause_span)
+        primary = layer_to_owner(effective_layer)
         rule_co = []
         rule_confidence = 0.6  # No matching rule → lower confidence
-        reason_text = f"No matching rule; attributed by span layer: {root_cause_span.layer.value}"
+        reason_text = f"No matching rule; attributed by span layer: {effective_layer.value}"
 
     # Layer 3: Tolerance analysis
     tolerance_co = layer3_tolerance_analysis(root_cause_span, tree)

@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import SpanLayer, SpanStatus
+from models import SpanLayer, SpanStatus, OTelSpan, get_effective_layer
 from trace_parser import parse_otlp_json, build_span_tree, _parse_attributes
 
 
@@ -120,6 +120,74 @@ class TestSpanLayerIdentification:
         data = _make_otlp([_make_raw_span("custom.something")])
         span = list(parse_otlp_json(data).spans.values())[0]
         assert span.layer == SpanLayer.UNKNOWN
+
+
+class TestOpenCodeTraceSpans:
+    """Tests for OpenCode Agent Trace span naming conventions."""
+
+    def test_turn_span_is_agent_layer(self):
+        data = _make_otlp([_make_raw_span("turn")])
+        span = list(parse_otlp_json(data).spans.values())[0]
+        assert span.layer == SpanLayer.AGENT
+
+    def test_agent_run_span_is_agent_layer(self):
+        data = _make_otlp([_make_raw_span("agent_run")])
+        span = list(parse_otlp_json(data).spans.values())[0]
+        assert span.layer == SpanLayer.AGENT
+
+    def test_user_approval_span_is_agent_layer(self):
+        data = _make_otlp([_make_raw_span("user_approval")])
+        span = list(parse_otlp_json(data).spans.values())[0]
+        assert span.layer == SpanLayer.AGENT
+
+    def test_model_inference_span_is_model_layer(self):
+        data = _make_otlp([_make_raw_span("model_inference")])
+        span = list(parse_otlp_json(data).spans.values())[0]
+        assert span.layer == SpanLayer.MODEL
+
+    def test_tool_call_span_layer_is_unknown(self):
+        """tool_call span's layer depends on tool_type attribute, so default is UNKNOWN."""
+        data = _make_otlp([_make_raw_span("tool_call")])
+        span = list(parse_otlp_json(data).spans.values())[0]
+        assert span.layer == SpanLayer.UNKNOWN
+
+
+class TestGetEffectiveLayer:
+    """Tests for get_effective_layer function which handles tool_type attribute."""
+
+    def _make_span(self, name: str, attrs: dict = None) -> OTelSpan:
+        return OTelSpan(
+            trace_id="trace1",
+            span_id="span1",
+            name=name,
+            start_time_unix_nano=0,
+            end_time_unix_nano=100000000,
+            attributes=attrs or {},
+        )
+
+    def test_tool_call_mcp_type(self):
+        span = self._make_span("tool_call", {"tool_type": "mcp"})
+        assert get_effective_layer(span) == SpanLayer.MCP
+
+    def test_tool_call_builtin_type(self):
+        span = self._make_span("tool_call", {"tool_type": "builtin"})
+        assert get_effective_layer(span) == SpanLayer.AGENT
+
+    def test_tool_call_skill_type(self):
+        span = self._make_span("tool_call", {"tool_type": "skill"})
+        assert get_effective_layer(span) == SpanLayer.SKILL
+
+    def test_tool_call_unknown_type(self):
+        span = self._make_span("tool_call", {})
+        assert get_effective_layer(span) == SpanLayer.UNKNOWN
+
+    def test_non_tool_call_uses_span_layer(self):
+        span = self._make_span("model_inference")
+        assert get_effective_layer(span) == SpanLayer.MODEL
+
+    def test_agent_run_uses_span_layer(self):
+        span = self._make_span("agent_run")
+        assert get_effective_layer(span) == SpanLayer.AGENT
 
 
 class TestParseAttributes:
