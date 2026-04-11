@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Trace Triage</title>
+    <title>Agent Trace 定界工具</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1f2328; }
@@ -27,14 +27,15 @@
 
         /* Trace list table */
         .trace-list { border: 1px solid #d1d9e0; border-radius: 8px; overflow: hidden; }
-        .trace-header-row { display: grid; grid-template-columns: 32px 1fr 80px 120px 130px 100px 80px; align-items: center; padding: 10px 16px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; font-size: 12px; font-weight: 600; color: #656d76; text-transform: uppercase; letter-spacing: 0.5px; }
-        .trace-row { display: grid; grid-template-columns: 32px 1fr 80px 120px 130px 100px 80px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eaeef2; cursor: pointer; transition: background 0.1s; }
+        .trace-header-row { display: grid; grid-template-columns: 32px 1fr 80px 130px 100px 80px 120px; align-items: center; padding: 10px 16px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; font-size: 12px; font-weight: 600; color: #656d76; text-transform: uppercase; letter-spacing: 0.5px; }
+        .trace-row { display: grid; grid-template-columns: 32px 1fr 80px 130px 100px 80px 120px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eaeef2; cursor: pointer; transition: background 0.1s; }
         .trace-row:last-child { border-bottom: none; }
         .trace-row:hover { background: #f6f8fa; }
         .trace-row.expanded { background: #f6f8fa; border-bottom-color: #d1d9e0; }
         .trace-row.has-error { border-left: 3px solid #cf222e; padding-left: 13px; }
         .trace-row.has-warning { border-left: 3px solid #9a6700; padding-left: 13px; }
         .trace-row.all-ok { border-left: 3px solid #1a7f37; padding-left: 13px; }
+        .trace-row.not-analyzed { border-left: 3px solid #d1d9e0; padding-left: 13px; }
 
         .row-expand { font-size: 12px; color: #656d76; transition: transform 0.2s; }
         .row-expand.open { transform: rotate(90deg); }
@@ -47,6 +48,7 @@
         .status-badge.error { background: #ffebe9; color: #cf222e; border: 1px solid #cf222e33; }
         .status-badge.ok { background: #dafbe1; color: #1a7f37; border: 1px solid #1a7f3733; }
         .status-badge.anomaly { background: #fff8c5; color: #9a6700; border: 1px solid #9a670033; }
+        .status-badge.pending { background: #eaeef2; color: #656d76; border: 1px solid #afb8c133; }
 
         .row-owner { font-size: 12px; }
         .owner-badge { padding: 3px 10px; border-radius: 12px; font-weight: 500; font-size: 11px; }
@@ -63,6 +65,14 @@
         .confidence-mini .fill { height: 100%; border-radius: 2px; }
 
         .row-spans { font-size: 12px; color: #656d76; font-family: monospace; }
+
+        /* Analyze button */
+        .analyze-btn { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid #d1d9e0; background: #f6f8fa; color: #1f2328; transition: all 0.15s; }
+        .analyze-btn:hover { border-color: #0969da; color: #0969da; background: #ffffff; }
+        .analyze-btn.l2 { border-color: #8250df; color: #8250df; background: #fbefff; }
+        .analyze-btn.l2:hover { background: #f0e0ff; }
+        .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .analyze-btn .spinner-sm { display: inline-block; width: 10px; height: 10px; border: 1.5px solid #d1d9e0; border-top-color: #0969da; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 4px; }
 
         /* Detail panel (expandable) */
         .detail-panel { display: none; border-bottom: 1px solid #d1d9e0; background: #ffffff; padding: 20px 16px 20px 48px; }
@@ -165,21 +175,24 @@
 
         /* Reasoning section */
         .reasoning-text { background: #fbefff; border: 1px solid #e2c6ff; border-radius: 4px; padding: 10px 12px; margin-top: 10px; font-size: 12px; line-height: 1.5; color: #1f2328; white-space: pre-wrap; }
+
+        /* Placeholder text for un-analyzed */
+        .placeholder-text { color: #afb8c1; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div>
-                <h1>Agent Trace Triage</h1>
-                <p class="subtitle">OTel Trace-based fault attribution for Agent debugging</p>
+                <h1>Agent Trace 定界工具</h1>
+                <p class="subtitle">基于 OTel Trace 的 Agent 故障自动归因</p>
             </div>
             <div class="header-actions">
                 <button class="settings-btn" id="settingsBtn" onclick="openSettings()">
                     <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg>
                     L2 LLM
                 </button>
-                <label class="upload-label" for="fileInput">+ Upload Trace</label>
+                <label class="upload-label" for="fileInput">+ 上传 Trace</label>
                 <input type="file" id="fileInput" class="file-input" accept=".json" onchange="uploadFile(event)">
             </div>
         </header>
@@ -188,7 +201,7 @@
         <div class="modal-overlay" id="settingsModal">
             <div class="modal">
                 <div class="modal-header">
-                    <h2>L2 LLM Settings</h2>
+                    <h2>L2 LLM 设置</h2>
                     <button class="modal-close" onclick="closeSettings()">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -197,58 +210,58 @@
                             <input type="checkbox" id="llmEnabled">
                             <span class="slider"></span>
                         </label>
-                        <span class="toggle-label">Enable L2 LLM Inference</span>
+                        <span class="toggle-label">启用 L2 LLM 推理</span>
                     </div>
                     <div class="form-group">
                         <label>API Base URL</label>
                         <input type="text" id="llmBaseUrl" value="https://coding.dashscope.aliyuncs.com/apps/anthropic">
-                        <div class="hint">Default: DashScope Anthropic-compatible endpoint</div>
+                        <div class="hint">默认：DashScope Anthropic 兼容端点</div>
                     </div>
                     <div class="form-group">
-                        <label>Model</label>
+                        <label>模型</label>
                         <input type="text" id="llmModel" value="qwen3.6-plus">
-                        <div class="hint">Model name for the LLM API</div>
+                        <div class="hint">LLM API 模型名称</div>
                     </div>
                     <div class="form-group">
-                        <label>Confidence Threshold</label>
+                        <label>置信度阈值</label>
                         <input type="number" id="llmThreshold" value="0.8" min="0" max="1" step="0.1">
-                        <div class="hint">Trigger L2 when L1 confidence &lt; threshold (0.0-1.0)</div>
+                        <div class="hint">L1 置信度低于此值时触发 L2（0.0-1.0）</div>
                     </div>
                     <div class="form-group">
                         <label>API Key</label>
-                        <input type="password" id="llmApiKey" placeholder="Enter your API key">
-                        <div class="hint">Required for L2 inference</div>
+                        <input type="password" id="llmApiKey" placeholder="输入 API Key">
+                        <div class="hint">L2 推理必需</div>
                     </div>
                     <div class="form-group">
-                        <label>Timeout (seconds)</label>
-                        <input type="number" id="llmTimeout" value="30" min="5" max="120">
+                        <label>超时时间（秒）</label>
+                        <input type="number" id="llmTimeout" value="60" min="5" max="120">
                     </div>
                     <div style="margin-top:16px;padding-top:16px;border-top:1px solid #eaeef2">
                         <button class="btn btn-secondary" id="testConnBtn" onclick="testConnection()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:6px">
                             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg>
-                            Test Connection
+                            测试连通性
                         </button>
                         <div id="testResult" style="margin-top:8px;font-size:12px;display:none"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                    <button class="btn btn-secondary" onclick="closeSettings()">取消</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
                 </div>
             </div>
         </div>
 
         <div class="stats-bar" id="statsBar" style="display:none">
-            <div class="stat-item"><span class="stat-dot error"></span><span class="stat-value" id="statError">0</span> Error</div>
-            <div class="stat-item"><span class="stat-dot warning"></span><span class="stat-value" id="statWarning">0</span> Anomaly</div>
-            <div class="stat-item"><span class="stat-dot ok"></span><span class="stat-value" id="statOk">0</span> OK</div>
+            <div class="stat-item"><span class="stat-dot error"></span><span class="stat-value" id="statError">0</span> 错误</div>
+            <div class="stat-item"><span class="stat-dot warning"></span><span class="stat-value" id="statWarning">0</span> 异常</div>
+            <div class="stat-item"><span class="stat-dot ok"></span><span class="stat-value" id="statOk">0</span> 正常</div>
             <div class="stat-item" style="margin-left:auto"><span class="source-badge rules">L1</span> <span class="stat-value" id="statL1">0</span></div>
             <div class="stat-item"><span class="source-badge llm">L2</span> <span class="stat-value" id="statL2">0</span></div>
-            <div class="stat-item">Total: <span class="stat-value" id="statTotal">0</span> traces</div>
+            <div class="stat-item">共 <span class="stat-value" id="statTotal">0</span> 条 Trace</div>
         </div>
 
         <div id="traceListContainer">
-            <div class="loading"><span class="spinner"></span>Loading and analyzing traces...</div>
+            <div class="loading"><span class="spinner"></span>正在加载 Trace 列表...</div>
         </div>
     </div>
 
@@ -265,7 +278,7 @@
             model: 'qwen3.6-plus',
             threshold: 0.8,
             apiKey: '',
-            timeout: 30
+            timeout: 60
         };
 
         function loadLLMConfig() {
@@ -301,7 +314,7 @@
             const btn = document.getElementById('settingsBtn');
             if (config.enabled && config.apiKey) {
                 btn.classList.add('llm-active');
-                btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg> L2 Active`;
+                btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg> L2 已启用`;
             } else {
                 btn.classList.remove('llm-active');
                 btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg> L2 LLM`;
@@ -330,19 +343,18 @@
                 model: document.getElementById('llmModel').value,
                 threshold: parseFloat(document.getElementById('llmThreshold').value) || 0.8,
                 apiKey: document.getElementById('llmApiKey').value,
-                timeout: parseInt(document.getElementById('llmTimeout').value) || 30
+                timeout: parseInt(document.getElementById('llmTimeout').value) || 60
             };
             saveLLMConfig(config);
             closeSettings();
-            // Re-analyze traces with new config
-            init();
+            renderList();
         }
 
         async function testConnection() {
             const btn = document.getElementById('testConnBtn');
             const resultDiv = document.getElementById('testResult');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner" style="width:12px;height:12px;border-width:2px;margin-right:0"></span> Testing...';
+            btn.innerHTML = '<span class="spinner" style="width:12px;height:12px;border-width:2px;margin-right:0"></span> 测试中...';
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = '';
             resultDiv.style.color = '#656d76';
@@ -351,14 +363,14 @@
                 baseUrl: document.getElementById('llmBaseUrl').value,
                 model: document.getElementById('llmModel').value,
                 apiKey: document.getElementById('llmApiKey').value,
-                timeout: parseInt(document.getElementById('llmTimeout').value) || 30,
+                timeout: parseInt(document.getElementById('llmTimeout').value) || 60,
             };
 
             if (!config.apiKey) {
                 resultDiv.style.color = '#cf222e';
-                resultDiv.textContent = 'Please enter an API Key first';
+                resultDiv.textContent = '请先输入 API Key';
                 btn.disabled = false;
-                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> Test Connection';
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> 测试连通性';
                 return;
             }
 
@@ -381,11 +393,11 @@
                 }
             } catch (e) {
                 resultDiv.style.color = '#cf222e';
-                resultDiv.textContent = 'Connection failed: ' + e.message;
+                resultDiv.textContent = '���接失败: ' + e.message;
             }
 
             btn.disabled = false;
-            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> Test Connection';
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> 测试连通性';
         }
 
         // Close modal on backdrop click
@@ -401,23 +413,70 @@
                 const res = await fetch(`${API}/api/samples`);
                 const samples = await res.json();
 
-                const llmHeaders = getLLMHeaders();
+                // Just load the list without analyzing — analysis is on-demand
+                allTraces = samples.map(s => ({
+                    name: s.name,
+                    analyzed: false,
+                    analyzing: false,
+                    triage: null,
+                    spans: null,
+                    span_count: 0,
+                }));
 
-                // Analyze all samples in parallel
-                const analyses = await Promise.all(
-                    samples.map(s =>
-                        fetch(`${API}/api/samples/${s.name}`, { headers: llmHeaders })
-                            .then(r => r.json())
-                            .then(data => ({ name: s.name, ...data }))
-                            .catch(err => ({ name: s.name, error: err.message }))
-                    )
-                );
-
-                allTraces = analyses.filter(a => !a.error);
                 renderList();
             } catch (e) {
                 document.getElementById('traceListContainer').innerHTML =
-                    '<div class="empty-state">Failed to load traces. Is the backend running?</div>';
+                    '<div class="empty-state">加载失败，请确认后端服务是否运行</div>';
+            }
+        }
+
+        async function analyzeTrace(idx, useL2) {
+            const item = allTraces[idx];
+            if (item.analyzing) return;
+
+            item.analyzing = true;
+            renderList();
+
+            try {
+                const headers = useL2 ? getLLMHeaders() : {};
+                const endpoint = item.uploaded
+                    ? null  // uploaded traces are already analyzed
+                    : `${API}/api/samples/${item.name}`;
+
+                if (!endpoint) {
+                    item.analyzing = false;
+                    renderList();
+                    return;
+                }
+
+                const res = await fetch(endpoint, { headers });
+                const data = await res.json();
+
+                item.analyzed = true;
+                item.analyzing = false;
+                item.triage = data.triage;
+                item.spans = data.spans;
+                item.span_count = data.span_count || (data.spans ? data.spans.length : 0);
+                item.trace_id = data.trace_id;
+                item.raw_trace = data.raw_trace;
+
+                renderList();
+
+                // Auto-expand the detail panel after analysis
+                const panel = document.getElementById(`detail-${idx}`);
+                const expand = document.getElementById(`expand-${idx}`);
+                const row = document.getElementById(`row-${idx}`);
+                if (panel && !panel.classList.contains('open')) {
+                    document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+                    document.querySelectorAll('.row-expand.open').forEach(e => e.classList.remove('open'));
+                    document.querySelectorAll('.trace-row.expanded').forEach(r => r.classList.remove('expanded'));
+                    panel.classList.add('open');
+                    if (expand) expand.classList.add('open');
+                    if (row) row.classList.add('expanded');
+                }
+            } catch (e) {
+                item.analyzing = false;
+                renderList();
             }
         }
 
@@ -427,23 +486,30 @@
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const llmHeaders = getLLMHeaders();
                 const res = await fetch(`${API}/api/trace/upload`, {
                     method: 'POST',
                     body: formData,
-                    headers: llmHeaders
                 });
                 const data = await res.json();
-                allTraces.unshift({ name: file.name.replace('.json', ''), ...data, uploaded: true });
+                allTraces.unshift({
+                    name: file.name.replace('.json', ''),
+                    analyzed: true,
+                    analyzing: false,
+                    uploaded: true,
+                    triage: data.triage,
+                    span_count: data.span_count,
+                    trace_id: data.trace_id,
+                    spans: data.spans || [],
+                });
                 renderList();
             } catch (e) {
-                alert('Upload failed: ' + e.message);
+                alert('上传失败: ' + e.message);
             }
             event.target.value = '';
         }
 
         function getTraceStatus(item) {
-            if (!item.triage) return 'ok';
+            if (!item.analyzed || !item.triage) return 'pending';
             const t = item.triage;
             if (t.fault_span && t.fault_span.status === 'ERROR') return 'error';
             if (t.primary_owner && t.primary_owner !== 'unknown') return 'error';
@@ -452,17 +518,32 @@
         }
 
         function getStatusLabel(status) {
-            if (status === 'error') return 'Error';
-            if (status === 'anomaly') return 'Anomaly';
-            return 'OK';
+            if (status === 'error') return '错误';
+            if (status === 'anomaly') return '异常';
+            if (status === 'pending') return '待分析';
+            return '正常';
+        }
+
+        function getOwnerLabel(owner) {
+            const map = {
+                'agent_team': 'Agent 团队',
+                'model_team': 'Model 团队',
+                'mcp_team': 'MCP 团队',
+                'skill_team': 'Skill 团队',
+                'user_interaction': '用户交互',
+                'unknown': '未知',
+            };
+            return map[owner] || owner;
         }
 
         function renderList() {
             const container = document.getElementById('traceListContainer');
 
             // Compute stats
-            let errorCount = 0, warningCount = 0, okCount = 0, l1Count = 0, l2Count = 0;
+            let errorCount = 0, warningCount = 0, okCount = 0, l1Count = 0, l2Count = 0, analyzedCount = 0;
             allTraces.forEach(item => {
+                if (!item.analyzed) return;
+                analyzedCount++;
                 const s = getTraceStatus(item);
                 if (s === 'error') errorCount++;
                 else if (s === 'anomaly') warningCount++;
@@ -472,62 +553,92 @@
                 else l1Count++;
             });
 
-            document.getElementById('statsBar').style.display = 'flex';
-            document.getElementById('statError').textContent = errorCount;
-            document.getElementById('statWarning').textContent = warningCount;
-            document.getElementById('statOk').textContent = okCount;
-            document.getElementById('statL1').textContent = l1Count;
-            document.getElementById('statL2').textContent = l2Count;
-            document.getElementById('statTotal').textContent = allTraces.length;
+            const statsBar = document.getElementById('statsBar');
+            if (analyzedCount > 0) {
+                statsBar.style.display = 'flex';
+                document.getElementById('statError').textContent = errorCount;
+                document.getElementById('statWarning').textContent = warningCount;
+                document.getElementById('statOk').textContent = okCount;
+                document.getElementById('statL1').textContent = l1Count;
+                document.getElementById('statL2').textContent = l2Count;
+                document.getElementById('statTotal').textContent = allTraces.length;
+            } else {
+                statsBar.style.display = 'none';
+            }
 
             if (allTraces.length === 0) {
-                container.innerHTML = '<div class="empty-state">No traces loaded</div>';
+                container.innerHTML = '<div class="empty-state">暂无 Trace</div>';
                 return;
             }
+
+            const llmConfig = loadLLMConfig();
+            const llmReady = llmConfig.enabled && llmConfig.apiKey;
 
             let html = '<div class="trace-list">';
             html += `<div class="trace-header-row">
                 <div></div>
                 <div>Trace</div>
-                <div>Source</div>
-                <div>Status</div>
-                <div>Owner</div>
-                <div>Confidence</div>
-                <div>Spans</div>
+                <div>状态</div>
+                <div>归属团队</div>
+                <div>置信度</div>
+                <div>Span</div>
+                <div>操作</div>
             </div>`;
 
             allTraces.forEach((item, idx) => {
                 const status = getTraceStatus(item);
                 const t = item.triage || {};
+                const analyzed = item.analyzed;
                 const owner = t.primary_owner || 'unknown';
                 const confidence = t.confidence != null ? Math.round(t.confidence * 100) : 0;
                 const confColor = confidence >= 70 ? '#1a7f37' : confidence >= 40 ? '#9a6700' : '#cf222e';
-                const spanCount = item.span_count || (item.spans ? item.spans.length : 0);
-                const rowClass = status === 'error' ? 'has-error' : status === 'anomaly' ? 'has-warning' : 'all-ok';
+                const spanCount = item.span_count || 0;
                 const displayName = item.name.replace(/_/g, ' ');
+                const source = t.source || '';
 
-                const source = t.source || 'rules';
-                const sourceLabel = source === 'llm' ? 'L2 LLM' : 'L1 Rules';
-                const sourceClass = source === 'llm' ? 'llm' : 'rules';
+                let rowClass = 'not-analyzed';
+                if (analyzed) {
+                    rowClass = status === 'error' ? 'has-error' : status === 'anomaly' ? 'has-warning' : 'all-ok';
+                }
 
-                html += `<div class="trace-row ${rowClass}" onclick="toggleDetail(${idx})" id="row-${idx}">
-                    <div class="row-expand" id="expand-${idx}">&#9654;</div>
+                // Source badge next to name
+                let sourceBadge = '';
+                if (analyzed && source) {
+                    const srcLabel = source === 'llm' ? 'L2' : 'L1';
+                    const srcClass = source === 'llm' ? 'llm' : 'rules';
+                    sourceBadge = `<span class="source-badge ${srcClass}">${srcLabel}</span>`;
+                }
+
+                // Action button
+                let actionHtml = '';
+                if (item.analyzing) {
+                    actionHtml = `<button class="analyze-btn" disabled><span class="spinner-sm"></span>分析中</button>`;
+                } else if (!analyzed) {
+                    // Not analyzed yet: if LLM enabled, go straight to L1+L2 hybrid
+                    if (llmReady) {
+                        actionHtml = `<button class="analyze-btn l2" onclick="event.stopPropagation();analyzeTrace(${idx}, true)">L1+L2 分析</button>`;
+                    } else {
+                        actionHtml = `<button class="analyze-btn" onclick="event.stopPropagation();analyzeTrace(${idx}, false)">分析</button>`;
+                    }
+                } else if (llmReady && source !== 'llm') {
+                    // Already L1 analyzed, offer L2 upgrade
+                    actionHtml = `<button class="analyze-btn l2" onclick="event.stopPropagation();analyzeTrace(${idx}, true)">L2 深度分析</button>`;
+                }
+
+                html += `<div class="trace-row ${rowClass}" onclick="${analyzed ? `toggleDetail(${idx})` : ''}" id="row-${idx}" style="${analyzed ? 'cursor:pointer' : 'cursor:default'}">
+                    <div class="row-expand" id="expand-${idx}">${analyzed ? '&#9654;' : ''}</div>
                     <div class="row-name">
                         <span class="trace-label">${escapeHtml(displayName)}</span>
-                        ${item.uploaded ? '<span style="font-size:10px;color:#0969da;margin-left:6px">uploaded</span>' : ''}
+                        ${item.uploaded ? '<span style="font-size:10px;color:#0969da;margin-left:6px">已上传</span>' : ''}
+                        ${sourceBadge}
                     </div>
-                    <div><span class="source-badge ${sourceClass}">${sourceLabel}</span></div>
-                    <div class="row-status"><span class="status-badge ${status}">${getStatusLabel(status)}</span></div>
-                    <div class="row-owner"><span class="owner-badge ${owner}">${owner.replace('_', ' ')}</span></div>
-                    <div class="row-confidence">
-                        <div class="confidence-mini">
-                            <div class="bar"><div class="fill" style="width:${confidence}%;background:${confColor}"></div></div>
-                            <span>${confidence}%</span>
-                        </div>
-                    </div>
-                    <div class="row-spans">${spanCount}</div>
+                    <div class="row-status">${analyzed ? `<span class="status-badge ${status}">${getStatusLabel(status)}</span>` : '<span class="placeholder-text">-</span>'}</div>
+                    <div class="row-owner">${analyzed ? `<span class="owner-badge ${owner}">${getOwnerLabel(owner)}</span>` : '<span class="placeholder-text">-</span>'}</div>
+                    <div class="row-confidence">${analyzed ? `<div class="confidence-mini"><div class="bar"><div class="fill" style="width:${confidence}%;background:${confColor}"></div></div><span>${confidence}%</span></div>` : '<span class="placeholder-text">-</span>'}</div>
+                    <div class="row-spans">${analyzed ? spanCount : '<span class="placeholder-text">-</span>'}</div>
+                    <div>${actionHtml}</div>
                 </div>`;
-                html += `<div class="detail-panel" id="detail-${idx}">${renderDetail(item)}</div>`;
+                html += `<div class="detail-panel" id="detail-${idx}">${analyzed ? renderDetail(item) : ''}</div>`;
             });
 
             html += '</div>';
@@ -535,6 +646,9 @@
         }
 
         function toggleDetail(idx) {
+            const item = allTraces[idx];
+            if (!item.analyzed) return;
+
             const panel = document.getElementById(`detail-${idx}`);
             const expand = document.getElementById(`expand-${idx}`);
             const row = document.getElementById(`row-${idx}`);
@@ -561,17 +675,17 @@
 
             // Triage summary
             const source = t.source || 'rules';
-            const sourceBadge = `<span class="source-badge ${source}">${source === 'llm' ? 'L2 LLM' : 'L1 Rules'}</span>`;
+            const sourceBadge = `<span class="source-badge ${source}">${source === 'llm' ? 'L2 LLM' : 'L1 规则'}</span>`;
 
             html += `<div class="detail-section">
-                <h3>Triage Result ${sourceBadge}</h3>
+                <h3>定界结果 ${sourceBadge}</h3>
                 <div class="triage-summary">
                     <div style="margin-bottom:8px">
-                        <strong>Primary:</strong> <span class="owner-badge ${t.primary_owner || 'unknown'}">${(t.primary_owner || 'unknown').replace('_', ' ')}</span>
+                        <strong>主责团队:</strong> <span class="owner-badge ${t.primary_owner || 'unknown'}">${getOwnerLabel(t.primary_owner || 'unknown')}</span>
                     </div>`;
             if (t.co_responsible && t.co_responsible.length > 0) {
-                html += `<div style="margin-bottom:8px"><strong>Co-responsible:</strong>
-                    <div class="co-responsible">${t.co_responsible.map(c => `<span class="co-badge">${c.replace('_', ' ')}</span>`).join('')}</div>
+                html += `<div style="margin-bottom:8px"><strong>共同责任:</strong>
+                    <div class="co-responsible">${t.co_responsible.map(c => `<span class="co-badge">${getOwnerLabel(c)}</span>`).join('')}</div>
                 </div>`;
             }
             if (t.root_cause) {
@@ -584,10 +698,10 @@
 
             // Evidence chain
             if (t.fault_chain && t.fault_chain.length > 0) {
-                html += `<div class="detail-section"><h3>Evidence Chain</h3>`;
+                html += `<div class="detail-section"><h3>证据链</h3>`;
                 t.fault_chain.forEach((s, i) => {
                     const arrow = i === 0 ? '&#9679;' : '&#8593;';
-                    const label = i === 0 ? 'ROOT CAUSE' : `Level ${i}`;
+                    const label = i === 0 ? '根因' : `第 ${i} 层`;
                     html += `<div class="chain-item">
                         <div class="chain-arrow">${arrow}</div>
                         <div class="chain-content">
@@ -612,7 +726,7 @@
 
                 const sortedSpans = [...spans].sort((a, b) => a.start_time_unix_nano - b.start_time_unix_nano);
 
-                html += `<div class="detail-section full-width"><h3>Trace Waterfall (${spans.length} spans)</h3>
+                html += `<div class="detail-section full-width"><h3>Trace 瀑布图 (${spans.length} spans)</h3>
                     <div class="waterfall-compact">`;
                 sortedSpans.forEach(s => {
                     const depth = s.depth || 0;
@@ -646,7 +760,7 @@
 
             // Action items (full width)
             if (t.action_items && t.action_items.length > 0) {
-                html += `<div class="detail-section full-width"><h3>Action Items</h3>`;
+                html += `<div class="detail-section full-width"><h3>行动项</h3>`;
                 t.action_items.forEach(item => {
                     const teamMatch = item.match(/^\[([^\]]+)\]/);
                     const team = teamMatch ? teamMatch[1] : '';

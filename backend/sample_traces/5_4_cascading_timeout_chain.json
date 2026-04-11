@@ -1,0 +1,62 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_4",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000060000000000",
+          "status": {"code": "ERROR", "message": "Timeout cascade"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_cascade_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_4",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000059900000000",
+          "status": {"code": "ERROR", "message": "Agent timeout"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_cascade_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "timeout"}},
+            {"key": "agent.timeout_ms", "value": {"intValue": 60000}}
+          ]
+        },
+        {
+          "traceId": "trace_5_4",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000030000000000",
+          "status": {"code": "ERROR", "message": "Model inference timeout"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "TimeoutError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_4",
+          "spanId": "span_tool",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000030100000000",
+          "endTimeUnixNano": "1700000055000000000",
+          "status": {"code": "ERROR", "message": "MCP tool timeout"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "heavy_computation"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "TimeoutError"}},
+            {"key": "duration_ms", "value": {"intValue": 24900}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

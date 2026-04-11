@@ -1,0 +1,90 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000025000000000",
+          "status": {"code": "ERROR", "message": "RetryExhausted: Max retries (3) exceeded"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_retry_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000024900000000",
+          "status": {"code": "ERROR", "message": "RetryExhausted"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_retry_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}},
+            {"key": "agent.retry_count", "value": {"intValue": 3}},
+            {"key": "agent.max_retries", "value": {"intValue": 3}}
+          ]
+        },
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "ERROR", "message": "503 Service Temporarily Unavailable"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "ServiceUnavailableError"}},
+            {"key": "http.status_code", "value": {"intValue": 503}}
+          ]
+        },
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_model_2",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000006000000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_tool",
+          "parentSpanId": "span_model_2",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000012100000000",
+          "endTimeUnixNano": "1700000016000000000",
+          "status": {"code": "ERROR", "message": "Network error"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "api_call"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "NetworkError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_7",
+          "spanId": "span_model_3",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000017000000000",
+          "endTimeUnixNano": "1700000022000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}},
+            {"key": "retry_after_seconds", "value": {"intValue": 60}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

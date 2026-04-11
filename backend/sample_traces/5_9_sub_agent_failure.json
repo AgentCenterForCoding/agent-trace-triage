@@ -1,0 +1,105 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000030000000000",
+          "status": {"code": "ERROR", "message": "Sub-agent failed"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_subagent_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_agent_main",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000029900000000",
+          "status": {"code": "ERROR", "message": "Sub-agent execution failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_main_001"}},
+            {"key": "agent_name", "value": {"stringValue": "orchestrator"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_model_main",
+          "parentSpanId": "span_agent_main",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000003000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_agent_sub",
+          "parentSpanId": "span_agent_main",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000003100000000",
+          "endTimeUnixNano": "1700000025000000000",
+          "status": {"code": "ERROR", "message": "Code generation failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_sub_001"}},
+            {"key": "parent_agent_run_id", "value": {"stringValue": "run_main_001"}},
+            {"key": "agent_name", "value": {"stringValue": "code_generator"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_model_sub_1",
+          "parentSpanId": "span_agent_sub",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000004000000000",
+          "endTimeUnixNano": "1700000010000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "max_tokens"}]}}},
+            {"key": "output_token_count", "value": {"intValue": 4096}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_tool_sub",
+          "parentSpanId": "span_model_sub_1",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000010100000000",
+          "endTimeUnixNano": "1700000015000000000",
+          "status": {"code": "ERROR", "message": "Invalid JSON: unexpected end of input"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "write_code"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "JSONParseError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_9",
+          "spanId": "span_model_sub_2",
+          "parentSpanId": "span_agent_sub",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000016000000000",
+          "endTimeUnixNano": "1700000022000000000",
+          "status": {"code": "ERROR", "message": "Context window exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "ContextLengthExceeded"}},
+            {"key": "input_token_count", "value": {"intValue": 200000}},
+            {"key": "max_context_tokens", "value": {"intValue": 128000}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

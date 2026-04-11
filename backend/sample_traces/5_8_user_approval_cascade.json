@@ -1,0 +1,91 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000120000000000",
+          "status": {"code": "ERROR", "message": "Operation cancelled"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_approval_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000119900000000",
+          "status": {"code": "ERROR", "message": "User cancelled operation"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_approval_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "user_cancel"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_tool",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000005100000000",
+          "endTimeUnixNano": "1700000065000000000",
+          "status": {"code": "ERROR", "message": "User approval timeout"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "delete_files"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ApprovalTimeoutError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_approval",
+          "parentSpanId": "span_tool",
+          "name": "user_approval",
+          "startTimeUnixNano": "1700000005200000000",
+          "endTimeUnixNano": "1700000065000000000",
+          "status": {"code": "ERROR", "message": "Timeout waiting for user"},
+          "attributes": [
+            {"key": "approve_id", "value": {"stringValue": "apv_timeout_001"}},
+            {"key": "approve_type", "value": {"stringValue": "destructive_operation"}},
+            {"key": "decision", "value": {"stringValue": "timeout"}},
+            {"key": "wait_duration_ms", "value": {"intValue": 59800}},
+            {"key": "approval.timeout_threshold_ms", "value": {"intValue": 60000}}
+          ]
+        },
+        {
+          "traceId": "trace_5_8",
+          "spanId": "span_tool_2",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000066000000000",
+          "endTimeUnixNano": "1700000070000000000",
+          "status": {"code": "ERROR", "message": "Operation cancelled by user"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "cleanup_temp"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "OperationCancelledError"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

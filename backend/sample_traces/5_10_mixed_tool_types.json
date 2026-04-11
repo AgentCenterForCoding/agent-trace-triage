@@ -1,0 +1,104 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000025000000000",
+          "status": {"code": "ERROR", "message": "Workflow failed"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_mixed_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000024900000000",
+          "status": {"code": "ERROR", "message": "Workflow execution failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_mixed_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000004000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_tool_builtin",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000004100000000",
+          "endTimeUnixNano": "1700000007000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "read_file"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_tool_mcp",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000007100000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "ERROR", "message": "MCP server disconnected"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "browser_screenshot"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ConnectionClosedError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_tool_skill",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000012100000000",
+          "endTimeUnixNano": "1700000018000000000",
+          "status": {"code": "ERROR", "message": "Skill dependency not found"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "deploy_preview"}},
+            {"key": "tool_type", "value": {"stringValue": "skill"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "DependencyNotFoundError"}},
+            {"key": "skill.missing_dependency", "value": {"stringValue": "vercel-cli"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_10",
+          "spanId": "span_tool_builtin_2",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000018100000000",
+          "endTimeUnixNano": "1700000022000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "write_file"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

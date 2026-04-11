@@ -17,7 +17,7 @@ class TestLLMConfig:
         assert config.model == "qwen3.6-plus"
         assert config.threshold == 0.8
         assert config.api_key == ""
-        assert config.timeout == 30
+        assert config.timeout == 60  # Increased for DashScope API latency
 
     def test_custom_values(self):
         """Test custom configuration."""
@@ -147,7 +147,7 @@ class TestParseLLMConfigFromHeaders:
         assert config.base_url == "https://coding.dashscope.aliyuncs.com/apps/anthropic"
         assert config.model == "qwen3.6-plus"
         assert config.threshold == 0.8
-        assert config.timeout == 30
+        assert config.timeout == 60  # Default increased for DashScope API latency
 
     def test_full_config(self):
         """Test full configuration from headers."""

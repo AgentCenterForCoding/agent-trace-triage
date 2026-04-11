@@ -1,0 +1,79 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_5",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_filter_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_5",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000007900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_filter_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "success"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_5",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000003000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "input_token_count", "value": {"intValue": 1000}},
+            {"key": "output_token_count", "value": {"intValue": 0}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "content_filter"}]}}},
+            {"key": "safety.blocked_category", "value": {"stringValue": "dangerous_content"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_5",
+          "spanId": "span_model_2",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000003100000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "input_token_count", "value": {"intValue": 800}},
+            {"key": "output_token_count", "value": {"intValue": 0}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "content_filter"}]}}},
+            {"key": "safety.blocked_category", "value": {"stringValue": "harmful_instructions"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_5",
+          "spanId": "span_model_3",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000005100000000",
+          "endTimeUnixNano": "1700000007000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "input_token_count", "value": {"intValue": 500}},
+            {"key": "output_token_count", "value": {"intValue": 200}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

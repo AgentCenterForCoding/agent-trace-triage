@@ -1,0 +1,103 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000020000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_batch_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000019900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_batch_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "success"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000003000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_tool_1",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000003100000000",
+          "endTimeUnixNano": "1700000006000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "read_file"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_tool_2",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000006100000000",
+          "endTimeUnixNano": "1700000009000000000",
+          "status": {"code": "ERROR", "message": "File not found: /nonexistent"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "read_file"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "FileNotFoundError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_tool_3",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000009100000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "write_file"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_5_3",
+          "spanId": "span_tool_4",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000012100000000",
+          "endTimeUnixNano": "1700000015000000000",
+          "status": {"code": "ERROR", "message": "Permission denied"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "execute_command"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "PermissionError"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

@@ -1,0 +1,79 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_6",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000015000000000",
+          "status": {"code": "ERROR", "message": "Task incomplete"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_conflict_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_6",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000014900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_conflict_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "success"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_6",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}},
+            {"key": "gen_ai.usage.output_tokens", "value": {"intValue": 4096}},
+            {"key": "gen_ai.response.truncated", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_5_6",
+          "spanId": "span_tool_mcp",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000005100000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "database_query"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}},
+            {"key": "mcp.result.rows_returned", "value": {"intValue": 0}},
+            {"key": "mcp.result.empty_set_warning", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_5_6",
+          "spanId": "span_tool_skill",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000008100000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "ERROR", "message": "Skill validation failed"},
+          "attributes": [
+            {"key": "function_name", "value": {"stringValue": "code_review"}},
+            {"key": "tool_type", "value": {"stringValue": "skill"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ValidationError"}},
+            {"key": "skill.validation_context", "value": {"stringValue": "Input truncated due to upstream token limit"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}
