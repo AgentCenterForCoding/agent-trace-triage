@@ -144,9 +144,8 @@ def invoke_llm(
 ) -> str:
     """Invoke LLM API and return raw response."""
     try:
-        # Use trust_env=False to prevent httpx from reading proxy env vars
-        # (the proxy often can't reach non-Anthropic endpoints like DashScope)
-        http_client = httpx.Client(timeout=config.timeout, trust_env=False)
+        # Use trust_env=True to allow httpx to read proxy from environment
+        http_client = httpx.Client(timeout=config.timeout, trust_env=True)
 
         client = Anthropic(
             api_key=config.api_key,
