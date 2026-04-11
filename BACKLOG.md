@@ -11,3 +11,4 @@ created: 2026-04-11
 
 | ID | Name | Status | Owner | Link |
 |----|------|--------|-------|------|
+| F001 | L2 输入饥饿修复（语义错误可见性）| idea | TBD | [discussion](docs/discussions/l2-input-starvation.md) |
