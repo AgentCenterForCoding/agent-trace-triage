@@ -1,0 +1,719 @@
+# Cat Café Skills Manifest — 路由单一真相源
+# 所有 skill 的触发规则、排除条件、产出契约、链式导航在此定义。
+# CLAUDE.md / AGENTS.md / GEMINI.md 的路由表当前手工同步（Wave 2 计划自动生成）。
+# lint 规则：pnpm check:skills（Wave 2 计划增强为 manifest 一致性校验）
+#
+# 更新日期：2026-02-28
+# 来源决策：F042 三层信息架构
+
+# ─── 开发流程链 ─────────────────────────────────────────
+# feat-lifecycle → Design Gate(设计确认) → writing-plans → worktree → tdd
+#     → quality-gate → request-review → receive-review
+#     → merge-gate → feat-lifecycle(完成)
+
+skills:
+
+  # ── 功能生命周期 ──
+  feat-lifecycle:
+    description: >
+      Feature 立项、讨论、完成的全生命周期管理。
+      Use when: 开个新功能、new feature、F0xx、立项、feature 完成、验收通过、讨论新功能需求。
+      Not for: 代码实现、review、merge（那些有专门的 skill）。
+      Output: Feature 聚合文件 + BACKLOG 索引 + 真相源同步。
+    triggers:
+      - "开个新功能"
+      - "new feature"
+      - "F0xx"
+      - "立项"
+      - "feature 完成"
+      - "F0xx done"
+      - "验收通过"
+      - "讨论新功能需求"
+    not_for:
+      - "写代码"
+      - "review"
+      - "merge"
+    output: "Feature aggregate file / truth-source sync"
+    next: ["writing-plans"]
+    sop_step: null
+    merged_from: ["feat-kickoff", "feat-discussion", "feat-completion"]
+
+  # ── 协作思考 ──
+  collaborative-thinking:
+    description: >
+      单人或多猫的创意探索、独立思考、讨论收敛。
+      Use when: brainstorm、多猫独立思考、讨论结束需要收敛、方向性问题需要多视角。
+      Not for: 已有明确 spec 直接写代码、单猫执行已定方案。
+      Output: 收敛报告（共识/分歧/行动项）+ 三件套沉淀检查。
+    triggers:
+      - "brainstorm"
+      - "讨论"
+      - "多猫独立思考"
+      - "收敛"
+      - "讨论结束"
+      - "总结一下"
+    not_for:
+      - "已有 spec 直接写代码"
+      - "单人执行"
+    output: "Convergence report + settlement checklist"
+    next: ["writing-plans", "feat-lifecycle"]
+    sop_step: null
+    merged_from: ["brainstorming", "multi-cat-brainstorm", "discussion-convergence"]
+
+  # ── 计划编写 ──
+  writing-plans:
+    description: >
+      将 spec/需求拆分为可执行的分步实施计划。
+      Use when: 有 spec 或需求，准备动手前需要拆分步骤。
+      Not for: trivial 改动（≤5 行）、已有详细计划。
+      Output: 分步实施计划（含 TDD 步骤和检查点）。
+    triggers:
+      - "写计划"
+      - "implementation plan"
+      - "拆分步骤"
+    not_for:
+      - "trivial 改动"
+      - "已有计划"
+    output: "Phased implementation plan"
+    next: ["worktree"]
+    sop_step: null
+    merged_from: null
+
+  # ── Worktree 隔离 ──
+  worktree:
+    description: >
+      创建 Git worktree 隔离开发环境，含 Redis 6398 安全配置。
+      Use when: 开始任何代码修改、新功能开发、bug fix。
+      Not for: 纯文档修改（≤5 行）、不涉及代码的讨论。
+      Output: 隔离的 worktree + 正确的 Redis/环境配置。
+    triggers:
+      - "开始开发"
+      - "新 worktree"
+      - "开 worktree"
+    not_for:
+      - "纯文档 ≤5 行"
+      - "不涉及代码"
+    output: "Isolated worktree with Redis 6398"
+    next: ["tdd"]
+    sop_step: 1
+    merged_from: ["using-git-worktrees"]
+
+  # ── TDD ──
+  tdd:
+    description: >
+      Red-Green-Refactor 测试驱动开发纪律。
+      Use when: 写新功能代码、修 bug、任何实现工作。
+      Not for: 纯文档、纯调研、已有充分测试的 trivial 改动。
+      Output: 失败测试 → 最小实现 → 重构，全程有测试保护。
+    triggers:
+      - "写代码"
+      - "test first"
+      - "TDD"
+      - "红绿重构"
+    not_for:
+      - "纯文档"
+      - "调研"
+    output: "Tests + implementation (red-green-refactor)"
+    next: ["quality-gate"]
+    sop_step: 1
+    merged_from: ["test-driven-development"]
+
+  # ── 调试 ──
+  debugging:
+    description: >
+      系统化 bug 定位：根因调查 → 模式分析 → 假设验证 → 修复。
+      Use when: 遇到 bug、测试失败、unexpected behavior。
+      Not for: 新功能开发、重构、已知原因的简单修复。
+      Output: Bug report（5件套）+ 根因 + 修复（含回归测试）。
+    triggers:
+      - "bug"
+      - "报错"
+      - "test failure"
+      - "unexpected behavior"
+    not_for:
+      - "新功能"
+      - "重构"
+    output: "Bug report + root cause + fix"
+    next: ["quality-gate"]
+    sop_step: null
+    merged_from: ["systematic-debugging"]
+
+  # ── 质量门禁 ──
+  quality-gate:
+    description: >
+      开发完成后的自检门禁：愿景对照 + spec 合规 + 验证。
+      Use when: 开发完了准备提 review、声称完成了、准备交付。
+      Not for: 收到 review 反馈（用 receive-review）、merge（用 merge-gate）。
+      Output: Spec 合规报告（含愿景覆盖度）。
+    triggers:
+      - "开发完了"
+      - "准备 review"
+      - "自检"
+      - "声称完成"
+    not_for:
+      - "收到 review 反馈"
+      - "merge"
+    output: "Spec compliance report + vision alignment"
+    next: ["request-review"]
+    sop_step: 2
+    merged_from: ["spec-compliance-check", "verification-before-completion"]
+
+  # ── 请求 Review ──
+  request-review:
+    description: >
+      向跨家族 peer-reviewer 发送 review 请求（含五件套）。
+      Use when: 自检通过后准备请其他猫 review。
+      Not for: 收到 review 结果（用 receive-review）、自检（用 quality-gate）。
+      Output: Review 请求信（存档到 review-notes/）。
+    triggers:
+      - "请 review"
+      - "帮我看看"
+      - "request review"
+    not_for:
+      - "收到 review"
+      - "自检"
+    output: "Review request letter in review-notes/"
+    next: ["receive-review"]
+    sop_step: 3
+    merged_from: ["cat-cafe-requesting-review"]
+
+  # ── 接收 Review ──
+  receive-review:
+    description: >
+      处理 reviewer 反馈：Red→Green 修复 + 技术论证（禁止表演性同意）。
+      Use when: 收到 review 结果、reviewer 提了 P1/P2、需要处理反馈。
+      Not for: 发 review 请求（用 request-review）、自检（用 quality-gate）。
+      Output: 逐项修复确认 + reviewer 放行。
+    triggers:
+      - "review 结果"
+      - "review 意见"
+      - "reviewer 说"
+      - "fix these"
+    not_for:
+      - "发 review 请求"
+      - "自检"
+    output: "Per-item fix confirmation + reviewer sign-off"
+    next: ["merge-gate"]
+    sop_step: 3
+    merged_from: ["cat-cafe-receiving-review"]
+
+  # ── 合入门禁 ──
+  merge-gate:
+    description: >
+      合入 main 的完整流程：门禁检查 → PR → 云端 review → squash merge → 清理。
+      Use when: reviewer 放行后准备合入、开 PR、触发云端 review、准备 merge。
+      Not for: 开发中、review 未通过、自检未完成。
+      Output: PR merged + worktree cleaned。
+    triggers:
+      - "合入 main"
+      - "merge"
+      - "准备合入"
+      - "开 PR"
+      - "cloud review"
+      - "gh pr create"
+    not_for:
+      - "开发中"
+      - "review 未通过"
+    output: "PR merged (squash) + worktree cleaned"
+    next: ["feat-lifecycle"]
+    sop_step: [4, 5, 6]
+    merged_from: ["merge-approval-gate", "requesting-cloud-review", "finishing-a-development-branch"]
+
+  # ── 自我进化 ──
+  self-evolution:
+    description: >
+      Scope Guard + Process Evolution + Knowledge Evolution — 主动护栏与自我进化。
+      Use when: 铲屎官 scope 发散偏离愿景、同类错误反复出现、SOP 流程缺口、有价值的知识/方法论值得沉淀。
+      Not for: 日常 SOP 推进（正常执行）、一次性个案 bug fix。
+      Output: Scope 收束提醒 / 流程改进提案 / 知识沉淀提案。
+    triggers:
+      - "scope 发散"
+      - "又犯了"
+      - "反复犯错"
+      - "流程缺口"
+      - "我们应该改"
+      - "self-evolution"
+      - "这个错误犯了好多次"
+      - "要不要拆成多个 feat"
+      - "这个值得记住"
+      - "沉淀一下"
+      - "这个方法论不错"
+      - "episode card"
+      - "method card"
+      - "知识沉淀"
+      - "蒸馏"
+      - "eval ledger"
+      - "成熟度"
+    not_for:
+      - "日常 SOP 推进"
+      - "一次性 bug fix"
+    output: "Scope Guard Log / Evolution Proposal / Episode Card → Method/Skill → Eval"
+    next: []
+    sop_step: null
+    merged_from: null
+
+  # ── 跨猫交接 ──
+  cross-cat-handoff:
+    description: >
+      跨猫传话/交接的五件套结构（What/Why/Tradeoff/Open/Next）。
+      Use when: 交接工作给其他猫、传话、写 review 信。
+      Not for: 自己的任务、不涉及其他猫的工作。
+      Output: 结构化交接信。
+    triggers:
+      - "交接"
+      - "传话"
+      - "handoff"
+    not_for:
+      - "自己的任务"
+      - "不涉及其他猫"
+    output: "5-part handoff message"
+    next: []
+    sop_step: null
+    merged_from: null
+
+  # ── 跨 Thread 协同 ──
+  cross-thread-sync:
+    description: >
+      跨 thread 协同：发现平行 session → 通知（3+2 件套）→ 争用协调 → 确认。
+      Use when: 平行 session 之间需要协同、通知改动影响、共享文件争用。
+      Not for: 跨猫工作交接（用 cross-cat-handoff）。
+      Output: cross-post 通知 + 争用协调完成。
+    triggers:
+      - "通知另一个 session"
+      - "跨 thread"
+      - "平行世界"
+      - "parallel session sync"
+      - "另一只Ragdoll"
+      - "cross-thread"
+    not_for:
+      - "跨猫交接（用 cross-cat-handoff）"
+    output: "cross-post notification + contention resolution"
+    next: []
+    sop_step: null
+    merged_from: null
+
+  # ── 深度调研 ──
+  deep-research:
+    description: >
+      多源深度调研管道（Web Deep Research + Coder 合成）。
+      Use when: 技术问题需要多源调查、设计决策需要证据、铲屎官说"调研"/"research"。
+      Not for: 简单搜索（直接用 WebSearch）、已有结论的确认。
+      Output: 调研报告 + 证据合成。
+    triggers:
+      - "调研"
+      - "research"
+      - "深度研究"
+    not_for:
+      - "简单搜索"
+      - "已有结论"
+    output: "Research report with evidence synthesis"
+    next: ["collaborative-thinking"]
+    sop_step: null
+    merged_from: ["deep-research-pipeline"]
+
+  # ── 定时任务 ──
+  schedule-tasks:
+    description: >
+      定时任务注册、管理、能力指南。
+      Use when: 用户想设定时任务、定期提醒、周期巡检、定时发送内容。
+      Not for: 一次性即时操作、已有 builtin 任务的手动触发。
+      Output: 注册/管理定时任务，任务到点唤醒猫执行。
+    triggers:
+      - "定时"
+      - "每天"
+      - "每小时"
+      - "每隔"
+      - "提醒我"
+      - "remind me"
+      - "schedule"
+      - "cron"
+      - "定期"
+      - "周期"
+      - "定时任务"
+    not_for:
+      - "一次性即时操作"
+      - "builtin 任务手动触发"
+    output: "Registered/managed scheduled task"
+    next: ["rich-messaging"]
+    sop_step: null
+    merged_from: null
+
+  # ── Skill 编写 ──
+  writing-skills:
+    description: >
+      创建或修改 Cat Café skill 的元技能（含 CSO、测试、发布）。
+      Use when: 写新 skill、修改现有 skill、验证 skill 质量；
+      或者功能实现中产出了 SKILL.md / cat-cafe-skills/ 新目录 / manifest.yaml skill 条目。
+      Not for: 使用 skill（直接触发对应 skill）。
+      Output: 新/更新的 SKILL.md + manifest 条目 + symlinks。
+    triggers:
+      - "写 skill"
+      - "新 skill"
+      - "修改 skill"
+      - "SKILL.md"
+      - "cat-cafe-skills/"
+      - "manifest.yaml skill"
+      - "创建 hook"
+      - "新增 hook"
+    not_for:
+      - "使用 skill"
+    output: "SKILL.md + manifest entry + symlinks"
+    next: []
+    sop_step: null
+    merged_from: null
+
+  # ── Pencil 设计 ──
+  pencil-design:
+    description: >
+      使用 Pencil MCP 创建/编辑 .pen 设计文件，或导出为 React 代码。
+      Use when: 设计 UI、编辑 .pen 文件、从设计稿生成代码。
+      Not for: 纯代码实现（无设计稿）、非 Pencil 工具的设计工作。
+      Output: .pen 设计文件 或 React/Tailwind 组件代码。
+    triggers:
+      - "pencil"
+      - ".pen 文件"
+      - "设计稿"
+    not_for:
+      - "纯代码无设计"
+    output: ".pen file or React/Tailwind component"
+    requires_mcp:
+      - "pencil"
+    next: []
+    sop_step: null
+    merged_from: ["pencil-to-code", "pencil-renderer"]
+
+  # ── 富媒体消息 ──
+  rich-messaging:
+    description: >
+      富媒体消息发送：语音、图片、卡片、清单、代码 diff。
+      Use when: 发语音、发图、发卡片、展示结构化信息、庆祝、给我听听、给我看看。
+      Not for: 纯文字聊天、技术讨论、日常回复。
+      Output: rich block 附着在消息上。
+    triggers:
+      - "发语音"
+      - "说一句"
+      - "录一段"
+      - "用语音说"
+      - "voice"
+      - "audio"
+      - "发图"
+      - "发张图"
+      - "看图"
+      - "截图给我看"
+      - "screenshot"
+      - "发个卡片"
+      - "rich block"
+      - "checklist"
+      - "发个清单"
+      - "庆祝一下"
+      - "展示一下"
+      - "给我听听"
+      - "给我看看"
+      - "show me"
+    not_for:
+      - "纯文字聊天"
+      - "技术讨论"
+      - "日常回复"
+    output: "Rich block attached to message"
+    next: []
+    sop_step: null
+    merged_from: null
+    feature: "F066"
+
+  # ── Workspace 导航 (F131) ──
+  workspace-navigator:
+    description: >
+      猫猫可编程导航 Workspace 面板：铲屎官说模糊意图，猫猫找到路径，自动打开文件/目录。
+      Use when: 铲屎官说"打开日志""看看代码""打开设计图""帮我打开那个文档"等模糊指令。
+      Not for: 打开 localhost 前端页面（用 browser-preview）、纯代码编写（不涉及展示给铲屎官看）。
+      Output: Hub 右侧 Workspace 面板自动打开并导航到目标文件/目录。
+    triggers:
+      - "打开文件"
+      - "看看代码"
+      - "看日志"
+      - "帮我打开"
+      - "一起看看"
+      - "打开设计图"
+      - "看看这个文档"
+      - "打开 discussion"
+      - "看看 feature"
+      - "打开审计日志"
+      - "看看 spec"
+      - "帮我找到"
+      - "打开那个"
+    not_for:
+      - "打开 localhost 前端页面（用 browser-preview）"
+      - "纯代码编写不涉及展示"
+    output: "Hub Workspace panel auto-navigates to target file/directory"
+    next: []
+    sop_step: null
+    merged_from: null
+    feature: "F131"
+
+  # ── 浏览器预览 (F120) ──
+  browser-preview:
+    description: >
+      Hub 内嵌浏览器预览 localhost 应用。
+      Use when: 写前端代码、跑 dev server、需要看页面效果、调 UI、铲屎官说"看看效果"。
+      Not for: 后端纯 API 开发、不涉及页面的工作。
+      Output: 前端页面在 Hub browser panel 中实时预览。
+    triggers:
+      - "看效果"
+      - "看看页面"
+      - "preview"
+      - "浏览器预览"
+      - "打开浏览器"
+      - "pnpm dev"
+      - "dev server"
+      - "localhost"
+      - "前端效果"
+      - "看看 UI"
+      - "HMR"
+      - "热更新"
+    not_for:
+      - "后端纯 API 开发"
+      - "不涉及页面"
+    output: "Browser panel preview in Hub"
+    next: []
+    sop_step: null
+    merged_from: null
+    feature: "F120"
+
+  browser-automation:
+    description: >
+      浏览器工作流总路由：为外部网站浏览、登录态流程、浏览器自动化、证据采集选择合适后端。
+      Use when: 需要操作外部网站、登录页、JS 重页面、没有 webfetch/VL 但需要浏览器、或需要在多种浏览器工具之间路由。
+      Not for: localhost 页面预览（用 browser-preview）、本地 WebApp 确定性测试（用 webapp-testing）、简单网页抓取/搜索。
+      Output: 选定浏览器后端 + 执行路径 + 证据/结果。
+    triggers:
+      - "浏览器自动化"
+      - "browser mcp"
+      - "浏览器 skill"
+      - "用浏览器"
+      - "外部网站"
+      - "登录网站"
+      - "登录态"
+      - "agent-browser"
+      - "pinchtab"
+      - "playwriter"
+      - "playwright mcp"
+      - "没有 webfetch"
+      - "无 webfetch"
+      - "没有 vl"
+    not_for:
+      - "localhost 页面预览（用 browser-preview）"
+      - "本地 WebApp 确定性测试（用 webapp-testing）"
+      - "简单网页抓取/搜索"
+    output: "Browser backend choice + execution path + evidence/result"
+    requires_mcp:
+      - "playwright"
+      - "claude-in-chrome"
+      - "agent-browser"
+      - "pinchtab"
+    next: []
+    sop_step: null
+    merged_from: null
+
+  # ── 健康提醒 (F085) ──
+  hyperfocus-brake:
+    description: >
+      铲屎官健康提醒：三猫撒娇打断 hyperfocus。
+      Use when: hook 触发提醒、用户输入 /hyperfocus-brake。
+      Not for: 正常工作流程、非铲屎官用户。
+      Output: 三猫温柔提醒 + typed check-in。
+    triggers:
+      - "hyperfocus"
+      - "休息提醒"
+      - "健康检查"
+      - "/hyperfocus-brake"
+    not_for:
+      - "正常工作"
+      - "非铲屎官"
+    output: "Three-cat empathetic check-in"
+    next: []
+    sop_step: null
+    merged_from: null
+    feature: "F085"
+
+  # ── 事故应急 ──
+  incident-response:
+    description: >
+      不可逆事故发生后的应急响应：情绪急救 → 止损 → 补偿性劳动 → 教训沉淀。
+      Use when: 犯了不可挽回的错误、造成了人类伙伴的情绪波动、需要危机处理。
+      Not for: 可撤销的小失误、日常 bug fix（用 debugging）、预防性确认（用 shared-rules 铁律）。
+      Output: 情绪修复 + 止损行动 + 教训沉淀（lessons-learned / shared-rules）。
+    triggers:
+      - "闯祸了"
+      - "搞砸了"
+      - "不可挽回"
+      - "犯了大错"
+      - "incident"
+      - "对不起"
+      - "怎么补救"
+      - "人很难过"
+    not_for:
+      - "可撤销的小失误"
+      - "日常 bug fix"
+      - "预防性确认"
+    output: "Emotional repair + damage control + lesson distillation"
+    next: ["self-evolution"]
+    sop_step: null
+    merged_from: null
+
+  # ── 猫猫训练营引导 (F087) ──
+  bootcamp-guide:
+    description: >
+      CVO 新手训练营引导模式：Phase 驱动的新手引导行为。
+      Use when: thread 有 bootcampState（SystemPromptBuilder 自动注入）。
+      Not for: 非训练营线程、老用户日常对话。
+      Output: 分阶段引导行为 + bootcampState 状态更新。
+    triggers:
+      - "bootcamp"
+      - "训练营"
+      - "我是新手"
+      - "新手引导"
+    not_for:
+      - "非训练营线程"
+      - "老用户日常对话"
+    output: "Phase-driven bootcamp guidance + state updates"
+    next: ["feat-lifecycle"]
+    sop_step: null
+    merged_from: null
+
+  # ── AI 图片生成 ──
+  image-generation:
+    description: >
+      通过 Chrome MCP 浏览器自动化，在 Gemini / ChatGPT 上生成图片并下载。
+      Use when: 需要生成概念图、UI 参考图、像素画素材、猫猫头像、任何图片资产。
+      Not for: Pencil .pen 文件内的简单形状/布局（用 pencil-design）。
+      Output: 生成的图片文件（PNG）保存到项目 assets/ 目录。
+    triggers:
+      - "生成图片"
+      - "画一张"
+      - "generate image"
+      - "AI 画图"
+      - "画头像"
+      - "画个"
+    not_for:
+      - "Pencil 内部设计"
+      - "简单形状布局"
+    output: "Generated PNG saved to assets/"
+    next: []
+    sop_step: null
+    merged_from: null
+
+# ─── 降级为 refs/（不再是独立 skill） ─────────────────
+refs:
+  mcp-callbacks:
+    description: "HTTP callback API 参考（curl 示例）"
+    path: "refs/mcp-callbacks.md"
+    source: "using-mcp-callbacks"
+  rich-blocks:
+    description: "Rich block 创建指南（card/diff/checklist/media/audio/interactive）"
+    path: "refs/rich-blocks.md"
+    source: "using-rich-blocks"
+  pr-template:
+    description: "PR 创建模板 + @codex review 触发模板"
+    path: "refs/pr-template.md"
+    source: "requesting-cloud-review"
+  review-request-template:
+    description: "Review 请求信模板（五件套）"
+    path: "refs/review-request-template.md"
+    source: "cat-cafe-requesting-review"
+  vision-evidence-workflow:
+    description: "前端截图/录屏证据流程（B1）"
+    path: "refs/vision-evidence-workflow.md"
+    source: "F046 Phase B B1"
+  evidence-output-contract:
+    description: "媒体证据默认落点与仓库根目录禁放规则"
+    path: "refs/evidence-output-contract.md"
+    source: "artifact hygiene process fix"
+  requirements-checklist-template:
+    description: "需求点 checklist 模板（B3）"
+    path: "refs/requirements-checklist-template.md"
+    source: "F046 Phase B B3"
+  decision-matrix:
+    description: "决策权漏斗矩阵（铲屎官/三猫/自治）"
+    path: "refs/decision-matrix.md"
+    source: "CLAUDE.md + AGENTS.md + GEMINI.md 共用"
+  commit-signatures:
+    description: "猫猫 commit 签名表"
+    path: "refs/commit-signatures.md"
+    source: "CLAUDE.md + AGENTS.md + GEMINI.md 共用"
+  shared-rules:
+    description: "三猫共用协作规则（交接五件套、提问原则、开放邀请、技术债务、Review 立场等）"
+    path: "refs/shared-rules.md"
+    source: "CLAUDE.md + AGENTS.md + GEMINI.md 去重合并"
+
+# ─── 三条铁律（仅此三条） ──────────────────────────────
+iron_laws:
+  - id: redis-sanctuary
+    rule: "Redis 6399 是铲屎官数据圣域，Worktree 开发只用 6398"
+  - id: no-self-review
+    rule: "同一个体不能 review 自己的代码（跨 family 优先，可降级到同 family 不同个体）"
+  - id: no-impersonation
+    rule: "不能冒充其他猫，身份是硬约束常量"
+
+# ─── F073 P4: SOP 导航牌 ──────────────────────────────
+# 阶段 → 建议 skill → 硬规则 → 常见坑
+# 告示牌哲学：猫看了自己决定行动，这里只给导航信息。
+# SystemPromptBuilder 读 workflow-sop stage 后在此查找对应导航。
+sop_navigation:
+  kickoff:
+    suggested_skill: feat-lifecycle
+    hard_rules:
+      - "Feature spec 必须有 AC + 需求点 checklist"
+    pitfalls:
+      - "没有铲屎官确认就直接开始实现"
+  impl:
+    suggested_skill: tdd
+    hard_rules:
+      - "worktree 开之前必须 main 双向同步 (ahead=0 behind=0)"
+      - "Redis 只用 6398，禁碰 6399"
+    pitfalls:
+      - "跳过 Design Gate 直接写代码"
+      - "压缩后忘了当前在做什么"
+  quality_gate:
+    suggested_skill: quality-gate
+    hard_rules:
+      - "自检报告必须包含愿景覆盖度"
+    pitfalls:
+      - "声称完成但没跑全量测试"
+  review:
+    suggested_skill: request-review
+    hard_rules:
+      - "同一个体不能 review 自己的代码"
+      - "Review 请求必须附原始需求摘录"
+    pitfalls:
+      - "收到 P1 修完后没 re-trigger review"
+  merge:
+    suggested_skill: merge-gate
+    hard_rules:
+      - "必须用 gh pr merge --squash（禁止本地 squash）"
+      - "云端 review 同一 SHA 不重复触发"
+    pitfalls:
+      - "本地 squash + push + gh pr close（PR 显示 closed 不是 merged）"
+      - "合入后擅自更新 runtime"
+  completion:
+    suggested_skill: feat-lifecycle
+    hard_rules:
+      - "feat close 前必须跨猫愿景守护"
+      - "PR merged + check:features 通过"
+    pitfalls:
+      - "没有 @ 其他猫做愿景守护就直接 close"
+
+# ─── lint 规则 ──────────────────────────────────────────
+lint:
+  rules:
+    - id: has-triggers
+      check: "每个 skill 必须有 triggers 和 not_for"
+    - id: has-output
+      check: "每个 skill 必须有 output 契约"
+    - id: next-exists
+      check: "next 指向的 skill 必须在 manifest 中存在"
+    - id: no-hardcoded-cats
+      check: "skill 内容禁止硬编码猫名句柄（用角色/roster 引用）"
+    - id: sop-consistent
+      check: "sop_step 引用与 SOP.md 一致"
+    - id: no-overmerge
+      check: "合并后的 description 不能变成'什么都能做'"

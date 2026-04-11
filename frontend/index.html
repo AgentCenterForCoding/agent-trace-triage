@@ -6,130 +6,169 @@
     <title>Agent Trace Triage</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        h1 { color: #58a6ff; margin-bottom: 8px; font-size: 24px; }
-        .subtitle { color: #8b949e; margin-bottom: 24px; font-size: 14px; }
-
-        /* Controls */
-        .controls { display: flex; gap: 16px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
-        select, button { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
-        select:hover, button:hover { border-color: #58a6ff; }
-        button.primary { background: #238636; border-color: #238636; color: #fff; }
-        button.primary:hover { background: #2ea043; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1f2328; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+        header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        h1 { color: #0969da; font-size: 22px; }
+        .subtitle { color: #656d76; font-size: 13px; margin-top: 2px; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .upload-label { background: #f6f8fa; border: 1px solid #d1d9e0; color: #1f2328; padding: 7px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: border-color 0.15s; }
+        .upload-label:hover { border-color: #0969da; }
         .file-input { display: none; }
-        .upload-label { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; display: inline-block; }
-        .upload-label:hover { border-color: #58a6ff; }
 
-        /* Triage Result Card */
-        .triage-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
-        .triage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .owner-badge { padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 14px; }
-        .owner-badge.agent_team { background: #388bfd33; color: #58a6ff; border: 1px solid #388bfd66; }
-        .owner-badge.model_team { background: #a371f733; color: #bc8cff; border: 1px solid #a371f766; }
-        .owner-badge.mcp_team { background: #f7883133; color: #f0883e; border: 1px solid #f7883166; }
-        .owner-badge.skill_team { background: #3fb95033; color: #56d364; border: 1px solid #3fb95066; }
-        .owner-badge.unknown { background: #8b949e33; color: #8b949e; border: 1px solid #8b949e66; }
-        .confidence-bar { flex: 1; max-width: 200px; }
-        .confidence-bar .bar-bg { background: #21262d; border-radius: 4px; height: 8px; }
-        .confidence-bar .bar-fill { border-radius: 4px; height: 8px; transition: width 0.3s; }
-        .confidence-bar .bar-label { font-size: 12px; color: #8b949e; margin-top: 4px; }
-        .co-responsible { display: flex; gap: 8px; margin-top: 8px; }
-        .co-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; background: #21262d; border: 1px solid #30363d; }
-        .root-cause { background: #21262d; border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 13px; line-height: 1.5; }
+        /* Stats bar */
+        .stats-bar { display: flex; gap: 24px; margin-bottom: 20px; padding: 12px 16px; background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px; }
+        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #656d76; }
+        .stat-value { font-weight: 600; color: #1f2328; }
+        .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .stat-dot.error { background: #cf222e; }
+        .stat-dot.ok { background: #1a7f37; }
+        .stat-dot.warning { background: #9a6700; }
 
-        /* Waterfall */
-        .waterfall { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
-        .waterfall h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
-        .span-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #21262d; font-size: 13px; }
+        /* Trace list table */
+        .trace-list { border: 1px solid #d1d9e0; border-radius: 8px; overflow: hidden; }
+        .trace-header-row { display: grid; grid-template-columns: 32px 1fr 120px 130px 100px 80px; align-items: center; padding: 10px 16px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; font-size: 12px; font-weight: 600; color: #656d76; text-transform: uppercase; letter-spacing: 0.5px; }
+        .trace-row { display: grid; grid-template-columns: 32px 1fr 120px 130px 100px 80px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eaeef2; cursor: pointer; transition: background 0.1s; }
+        .trace-row:last-child { border-bottom: none; }
+        .trace-row:hover { background: #f6f8fa; }
+        .trace-row.expanded { background: #f6f8fa; border-bottom-color: #d1d9e0; }
+        .trace-row.has-error { border-left: 3px solid #cf222e; padding-left: 13px; }
+        .trace-row.has-warning { border-left: 3px solid #9a6700; padding-left: 13px; }
+        .trace-row.all-ok { border-left: 3px solid #1a7f37; padding-left: 13px; }
+
+        .row-expand { font-size: 12px; color: #656d76; transition: transform 0.2s; }
+        .row-expand.open { transform: rotate(90deg); }
+        .row-name { font-size: 13px; font-weight: 500; }
+        .row-name .trace-label { color: #1f2328; }
+        .row-name .trace-id { color: #656d76; font-size: 11px; font-family: monospace; margin-left: 8px; }
+
+        .row-status { font-size: 12px; }
+        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .status-badge.error { background: #ffebe9; color: #cf222e; border: 1px solid #cf222e33; }
+        .status-badge.ok { background: #dafbe1; color: #1a7f37; border: 1px solid #1a7f3733; }
+        .status-badge.anomaly { background: #fff8c5; color: #9a6700; border: 1px solid #9a670033; }
+
+        .row-owner { font-size: 12px; }
+        .owner-badge { padding: 3px 10px; border-radius: 12px; font-weight: 500; font-size: 11px; }
+        .owner-badge.agent_team { background: #ddf4ff; color: #0969da; border: 1px solid #54aeff44; }
+        .owner-badge.model_team { background: #fbefff; color: #8250df; border: 1px solid #c297ff44; }
+        .owner-badge.mcp_team { background: #fff8c5; color: #9a6700; border: 1px solid #d4a72c44; }
+        .owner-badge.skill_team { background: #dafbe1; color: #1a7f37; border: 1px solid #4ac26b44; }
+        .owner-badge.unknown { background: #eaeef2; color: #656d76; border: 1px solid #afb8c133; }
+
+        .row-confidence { font-size: 12px; color: #656d76; }
+        .confidence-mini { display: flex; align-items: center; gap: 6px; }
+        .confidence-mini .bar { width: 40px; height: 4px; background: #eaeef2; border-radius: 2px; overflow: hidden; }
+        .confidence-mini .fill { height: 100%; border-radius: 2px; }
+
+        .row-spans { font-size: 12px; color: #656d76; font-family: monospace; }
+
+        /* Detail panel (expandable) */
+        .detail-panel { display: none; border-bottom: 1px solid #d1d9e0; background: #ffffff; padding: 20px 16px 20px 48px; }
+        .detail-panel.open { display: block; }
+
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 1000px) { .detail-grid { grid-template-columns: 1fr; } }
+
+        .detail-section { background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px; padding: 16px; }
+        .detail-section h3 { font-size: 13px; color: #656d76; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .detail-section.full-width { grid-column: 1 / -1; }
+
+        /* Triage summary in detail */
+        .triage-summary { font-size: 13px; line-height: 1.6; color: #1f2328; }
+        .triage-summary .root-cause-text { background: #ffffff; border: 1px solid #d1d9e0; border-radius: 4px; padding: 8px 10px; margin-top: 8px; font-size: 12px; }
+        .co-responsible { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+        .co-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; background: #eaeef2; border: 1px solid #d1d9e0; color: #1f2328; }
+
+        /* Waterfall in detail */
+        .waterfall-compact { max-height: 300px; overflow-y: auto; }
+        .span-row { display: flex; align-items: center; padding: 4px 0; border-bottom: 1px solid #eaeef233; font-size: 12px; }
         .span-row:last-child { border-bottom: none; }
-        .span-indent { display: inline-block; }
-        .span-name { min-width: 250px; font-family: monospace; white-space: nowrap; }
-        .span-name.error { color: #f85149; }
-        .span-name.anomaly { color: #d29922; }
-        .span-name.ok { color: #56d364; }
-        .span-name.root-cause-span { background: #f8514922; padding: 2px 6px; border-radius: 3px; border: 1px solid #f8514944; }
-        .span-layer { min-width: 80px; text-align: center; }
-        .span-layer span { padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-        .layer-agent { background: #388bfd22; color: #58a6ff; }
-        .layer-model { background: #a371f722; color: #bc8cff; }
-        .layer-mcp { background: #f7883122; color: #f0883e; }
-        .layer-skill { background: #3fb95022; color: #56d364; }
-        .layer-unknown { background: #8b949e22; color: #8b949e; }
-        .span-duration { min-width: 80px; text-align: right; color: #8b949e; font-family: monospace; }
-        .span-bar-container { flex: 1; padding: 0 12px; }
-        .span-bar { height: 6px; border-radius: 3px; min-width: 2px; }
-        .span-bar.error { background: #f85149; }
-        .span-bar.ok { background: #388bfd; }
-        .span-bar.anomaly { background: #d29922; }
+        .span-name { min-width: 200px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .span-name.error { color: #cf222e; }
+        .span-name.anomaly { color: #9a6700; }
+        .span-name.ok { color: #1a7f37; }
+        .span-name.root-cause-span { background: #ffebe9; padding: 1px 4px; border-radius: 2px; border: 1px solid #cf222e33; }
+        .span-layer-tag { padding: 1px 6px; border-radius: 3px; font-size: 10px; margin-left: 6px; }
+        .layer-agent { background: #ddf4ff; color: #0969da; }
+        .layer-model { background: #fbefff; color: #8250df; }
+        .layer-mcp { background: #fff8c5; color: #9a6700; }
+        .layer-skill { background: #dafbe1; color: #1a7f37; }
+        .layer-unknown { background: #eaeef2; color: #656d76; }
+        .span-bar-area { flex: 1; padding: 0 8px; }
+        .span-bar { height: 4px; border-radius: 2px; min-width: 2px; }
+        .span-bar.error { background: #cf222e; }
+        .span-bar.ok { background: #0969da; }
+        .span-bar.anomaly { background: #9a6700; }
+        .span-duration { min-width: 60px; text-align: right; color: #656d76; font-family: monospace; font-size: 11px; }
 
-        /* Evidence Chain */
-        .evidence { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
-        .evidence h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
-        .chain-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
-        .chain-arrow { color: #f85149; font-size: 18px; min-width: 20px; text-align: center; padding-top: 2px; }
-        .chain-content { font-size: 13px; }
-        .chain-content .span-ref { font-family: monospace; color: #58a6ff; }
+        /* Evidence chain in detail */
+        .chain-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 12px; }
+        .chain-arrow { color: #cf222e; font-size: 14px; min-width: 16px; text-align: center; padding-top: 1px; }
+        .chain-content .span-ref { font-family: monospace; color: #0969da; }
 
-        /* Action Items */
-        .actions { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
-        .actions h2 { color: #c9d1d9; font-size: 16px; margin-bottom: 16px; }
-        .action-item { padding: 8px 12px; background: #21262d; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-        .action-team { font-weight: 600; color: #58a6ff; }
+        /* Action items in detail */
+        .action-item { padding: 6px 10px; background: #ffffff; border: 1px solid #d1d9e0; border-radius: 4px; margin-bottom: 6px; font-size: 12px; }
+        .action-team { font-weight: 600; color: #0969da; }
 
-        .empty-state { text-align: center; color: #8b949e; padding: 60px 20px; font-size: 16px; }
+        /* Loading state */
+        .loading { text-align: center; color: #656d76; padding: 40px; font-size: 14px; }
+        .loading .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #d1d9e0; border-top-color: #0969da; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { text-align: center; color: #656d76; padding: 60px 20px; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Agent Trace Triage</h1>
-        <p class="subtitle">OTel Trace-based fault attribution for Agent debugging</p>
+        <header>
+            <div>
+                <h1>Agent Trace Triage</h1>
+                <p class="subtitle">OTel Trace-based fault attribution for Agent debugging</p>
+            </div>
+            <div class="header-actions">
+                <label class="upload-label" for="fileInput">+ Upload Trace</label>
+                <input type="file" id="fileInput" class="file-input" accept=".json" onchange="uploadFile(event)">
+            </div>
+        </header>
 
-        <div class="controls">
-            <select id="sampleSelect">
-                <option value="">-- Select sample trace --</option>
-            </select>
-            <button class="primary" onclick="analyzeSample()">Analyze</button>
-            <span style="color: #30363d">|</span>
-            <label class="upload-label" for="fileInput">Upload Trace JSON</label>
-            <input type="file" id="fileInput" class="file-input" accept=".json" onchange="uploadFile(event)">
+        <div class="stats-bar" id="statsBar" style="display:none">
+            <div class="stat-item"><span class="stat-dot error"></span><span class="stat-value" id="statError">0</span> Error</div>
+            <div class="stat-item"><span class="stat-dot warning"></span><span class="stat-value" id="statWarning">0</span> Anomaly</div>
+            <div class="stat-item"><span class="stat-dot ok"></span><span class="stat-value" id="statOk">0</span> OK</div>
+            <div class="stat-item" style="margin-left:auto">Total: <span class="stat-value" id="statTotal">0</span> traces</div>
         </div>
 
-        <div id="results">
-            <div class="empty-state">Select a sample trace or upload a JSON file to start analysis</div>
+        <div id="traceListContainer">
+            <div class="loading"><span class="spinner"></span>Loading and analyzing traces...</div>
         </div>
     </div>
 
     <script>
-        const API = '';  // Same origin
+        const API = '';
 
-        // Load samples on startup
-        async function loadSamples() {
+        let allTraces = [];
+
+        async function init() {
             try {
                 const res = await fetch(`${API}/api/samples`);
                 const samples = await res.json();
-                const select = document.getElementById('sampleSelect');
-                samples.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.name;
-                    opt.textContent = s.name.replace(/_/g, ' ');
-                    select.appendChild(opt);
-                });
-            } catch (e) {
-                console.error('Failed to load samples:', e);
-            }
-        }
 
-        async function analyzeSample() {
-            const name = document.getElementById('sampleSelect').value;
-            if (!name) return alert('Please select a sample');
-            try {
-                const res = await fetch(`${API}/api/samples/${name}`);
-                const data = await res.json();
-                renderResults(data);
+                // Analyze all samples in parallel
+                const analyses = await Promise.all(
+                    samples.map(s =>
+                        fetch(`${API}/api/samples/${s.name}`)
+                            .then(r => r.json())
+                            .then(data => ({ name: s.name, ...data }))
+                            .catch(err => ({ name: s.name, error: err.message }))
+                    )
+                );
+
+                allTraces = analyses.filter(a => !a.error);
+                renderList();
             } catch (e) {
-                console.error('Analysis failed:', e);
-                alert('Analysis failed: ' + e.message);
+                document.getElementById('traceListContainer').innerHTML =
+                    '<div class="empty-state">Failed to load traces. Is the backend running?</div>';
             }
         }
 
@@ -141,112 +180,202 @@
             try {
                 const res = await fetch(`${API}/api/trace/upload`, { method: 'POST', body: formData });
                 const data = await res.json();
-                renderResults(data);
+                allTraces.unshift({ name: file.name.replace('.json', ''), ...data, uploaded: true });
+                renderList();
             } catch (e) {
-                console.error('Upload failed:', e);
                 alert('Upload failed: ' + e.message);
+            }
+            event.target.value = '';
+        }
+
+        function getTraceStatus(item) {
+            if (!item.triage) return 'ok';
+            const t = item.triage;
+            if (t.fault_span && t.fault_span.status === 'ERROR') return 'error';
+            if (t.primary_owner && t.primary_owner !== 'unknown') return 'error';
+            if (t.confidence > 0 && t.fault_chain && t.fault_chain.length > 0) return 'anomaly';
+            return 'ok';
+        }
+
+        function getStatusLabel(status) {
+            if (status === 'error') return 'Error';
+            if (status === 'anomaly') return 'Anomaly';
+            return 'OK';
+        }
+
+        function renderList() {
+            const container = document.getElementById('traceListContainer');
+
+            // Compute stats
+            let errorCount = 0, warningCount = 0, okCount = 0;
+            allTraces.forEach(item => {
+                const s = getTraceStatus(item);
+                if (s === 'error') errorCount++;
+                else if (s === 'anomaly') warningCount++;
+                else okCount++;
+            });
+
+            document.getElementById('statsBar').style.display = 'flex';
+            document.getElementById('statError').textContent = errorCount;
+            document.getElementById('statWarning').textContent = warningCount;
+            document.getElementById('statOk').textContent = okCount;
+            document.getElementById('statTotal').textContent = allTraces.length;
+
+            if (allTraces.length === 0) {
+                container.innerHTML = '<div class="empty-state">No traces loaded</div>';
+                return;
+            }
+
+            let html = '<div class="trace-list">';
+            html += `<div class="trace-header-row">
+                <div></div>
+                <div>Trace</div>
+                <div>Status</div>
+                <div>Owner</div>
+                <div>Confidence</div>
+                <div>Spans</div>
+            </div>`;
+
+            allTraces.forEach((item, idx) => {
+                const status = getTraceStatus(item);
+                const t = item.triage || {};
+                const owner = t.primary_owner || 'unknown';
+                const confidence = t.confidence != null ? Math.round(t.confidence * 100) : 0;
+                const confColor = confidence >= 70 ? '#1a7f37' : confidence >= 40 ? '#9a6700' : '#cf222e';
+                const spanCount = item.span_count || (item.spans ? item.spans.length : 0);
+                const rowClass = status === 'error' ? 'has-error' : status === 'anomaly' ? 'has-warning' : 'all-ok';
+                const displayName = item.name.replace(/_/g, ' ');
+
+                html += `<div class="trace-row ${rowClass}" onclick="toggleDetail(${idx})" id="row-${idx}">
+                    <div class="row-expand" id="expand-${idx}">&#9654;</div>
+                    <div class="row-name">
+                        <span class="trace-label">${escapeHtml(displayName)}</span>
+                        ${item.uploaded ? '<span style="font-size:10px;color:#0969da;margin-left:6px">uploaded</span>' : ''}
+                    </div>
+                    <div class="row-status"><span class="status-badge ${status}">${getStatusLabel(status)}</span></div>
+                    <div class="row-owner"><span class="owner-badge ${owner}">${owner.replace('_', ' ')}</span></div>
+                    <div class="row-confidence">
+                        <div class="confidence-mini">
+                            <div class="bar"><div class="fill" style="width:${confidence}%;background:${confColor}"></div></div>
+                            <span>${confidence}%</span>
+                        </div>
+                    </div>
+                    <div class="row-spans">${spanCount}</div>
+                </div>`;
+                html += `<div class="detail-panel" id="detail-${idx}">${renderDetail(item)}</div>`;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function toggleDetail(idx) {
+            const panel = document.getElementById(`detail-${idx}`);
+            const expand = document.getElementById(`expand-${idx}`);
+            const row = document.getElementById(`row-${idx}`);
+            const isOpen = panel.classList.contains('open');
+
+            // Close all
+            document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+            document.querySelectorAll('.row-expand.open').forEach(e => e.classList.remove('open'));
+            document.querySelectorAll('.trace-row.expanded').forEach(r => r.classList.remove('expanded'));
+
+            if (!isOpen) {
+                panel.classList.add('open');
+                expand.classList.add('open');
+                row.classList.add('expanded');
             }
         }
 
-        function renderResults(data) {
-            const container = document.getElementById('results');
-            const t = data.triage;
-            const spans = data.spans || [];
+        function renderDetail(item) {
+            const t = item.triage || {};
+            const spans = item.spans || [];
             const faultSpanId = t.fault_span ? t.fault_span.span_id : null;
 
-            // Sort spans for waterfall: by start_time, then by depth
-            spans.sort((a, b) => a.start_time_unix_nano - b.start_time_unix_nano);
+            let html = '<div class="detail-grid">';
 
-            // Find time range for waterfall bars
-            let minTime = Infinity, maxTime = 0;
-            spans.forEach(s => {
-                if (s.start_time_unix_nano < minTime) minTime = s.start_time_unix_nano;
-                if (s.end_time_unix_nano > maxTime) maxTime = s.end_time_unix_nano;
-            });
-            const totalRange = maxTime - minTime || 1;
-
-            // Confidence color
-            const confPct = Math.round(t.confidence * 100);
-            const confColor = confPct >= 70 ? '#56d364' : confPct >= 40 ? '#d29922' : '#f85149';
-
-            let html = '';
-
-            // Triage Result Card
-            html += `<div class="triage-card">
-                <div class="triage-header">
-                    <span class="owner-badge ${t.primary_owner}">Primary: ${t.primary_owner}</span>
-                    <div class="confidence-bar">
-                        <div class="bar-bg"><div class="bar-fill" style="width:${confPct}%;background:${confColor}"></div></div>
-                        <div class="bar-label">Confidence: ${confPct}%</div>
-                    </div>
-                </div>`;
-
-            if (t.co_responsible && t.co_responsible.length > 0) {
-                html += `<div>Co-responsible:</div><div class="co-responsible">`;
-                t.co_responsible.forEach(co => {
-                    html += `<span class="co-badge">${co}</span>`;
-                });
-                html += `</div>`;
-            }
-
-            html += `<div class="root-cause">${escapeHtml(t.root_cause)}</div>`;
-            html += `</div>`;
-
-            // Waterfall
-            if (spans.length > 0) {
-                html += `<div class="waterfall"><h2>Trace Waterfall (${spans.length} spans)</h2>`;
-                spans.forEach(s => {
-                    const depth = s.depth || 0;
-                    const indent = depth * 20;
-                    const isError = s.status === 'ERROR';
-                    const isAnomaly = !isError && (
-                        (s.attributes && (s.attributes['gen_ai.response.finish_reasons'] === 'content_filter' ||
-                         s.attributes['gen_ai.response.finish_reasons'] === 'max_tokens'))
-                    );
-                    const isFault = s.span_id === faultSpanId;
-                    const statusClass = isError ? 'error' : isAnomaly ? 'anomaly' : 'ok';
-                    const faultClass = isFault ? ' root-cause-span' : '';
-                    const layerClass = `layer-${s.layer}`;
-                    const barLeft = ((s.start_time_unix_nano - minTime) / totalRange * 100).toFixed(1);
-                    const barWidth = Math.max(((s.end_time_unix_nano - s.start_time_unix_nano) / totalRange * 100), 0.5).toFixed(1);
-                    const durationMs = s.duration_ms.toFixed(0);
-
-                    html += `<div class="span-row">
-                        <div class="span-name ${statusClass}${faultClass}" style="padding-left:${indent}px">
-                            ${isFault ? '&#9654; ' : ''}${escapeHtml(s.name)}
-                        </div>
-                        <div class="span-layer"><span class="${layerClass}">${s.layer}</span></div>
-                        <div class="span-bar-container">
-                            <div class="span-bar ${statusClass}" style="margin-left:${barLeft}%;width:${barWidth}%"></div>
-                        </div>
-                        <div class="span-duration">${durationMs}ms</div>
+            // Triage summary
+            html += `<div class="detail-section">
+                <h3>Triage Result</h3>
+                <div class="triage-summary">
+                    <div style="margin-bottom:8px">
+                        <strong>Primary:</strong> <span class="owner-badge ${t.primary_owner || 'unknown'}">${(t.primary_owner || 'unknown').replace('_', ' ')}</span>
                     </div>`;
-                });
-                html += `</div>`;
+            if (t.co_responsible && t.co_responsible.length > 0) {
+                html += `<div style="margin-bottom:8px"><strong>Co-responsible:</strong>
+                    <div class="co-responsible">${t.co_responsible.map(c => `<span class="co-badge">${c.replace('_', ' ')}</span>`).join('')}</div>
+                </div>`;
             }
+            if (t.root_cause) {
+                html += `<div class="root-cause-text">${escapeHtml(t.root_cause)}</div>`;
+            }
+            html += `</div></div>`;
 
-            // Evidence Chain
+            // Evidence chain
             if (t.fault_chain && t.fault_chain.length > 0) {
-                html += `<div class="evidence"><h2>Evidence Chain</h2>`;
+                html += `<div class="detail-section"><h3>Evidence Chain</h3>`;
                 t.fault_chain.forEach((s, i) => {
                     const arrow = i === 0 ? '&#9679;' : '&#8593;';
                     const label = i === 0 ? 'ROOT CAUSE' : `Level ${i}`;
                     html += `<div class="chain-item">
                         <div class="chain-arrow">${arrow}</div>
                         <div class="chain-content">
-                            <strong>${label}</strong><br>
+                            <strong>${label}</strong>
                             <span class="span-ref">${escapeHtml(s.name)}</span>
                             [${s.layer}] — ${s.status}
-                            ${s.status_message ? '<br>' + escapeHtml(s.status_message) : ''}
+                            ${s.status_message ? '<br><span style="color:#656d76">' + escapeHtml(s.status_message) + '</span>' : ''}
                         </div>
                     </div>`;
                 });
                 html += `</div>`;
             }
 
-            // Action Items
+            // Waterfall (full width)
+            if (spans.length > 0) {
+                let minTime = Infinity, maxTime = 0;
+                spans.forEach(s => {
+                    if (s.start_time_unix_nano < minTime) minTime = s.start_time_unix_nano;
+                    if (s.end_time_unix_nano > maxTime) maxTime = s.end_time_unix_nano;
+                });
+                const totalRange = maxTime - minTime || 1;
+
+                const sortedSpans = [...spans].sort((a, b) => a.start_time_unix_nano - b.start_time_unix_nano);
+
+                html += `<div class="detail-section full-width"><h3>Trace Waterfall (${spans.length} spans)</h3>
+                    <div class="waterfall-compact">`;
+                sortedSpans.forEach(s => {
+                    const depth = s.depth || 0;
+                    const indent = depth * 16;
+                    const isError = s.status === 'ERROR';
+                    const isAnomaly = !isError && (s.attributes && (
+                        s.attributes['gen_ai.response.finish_reasons'] === 'content_filter' ||
+                        s.attributes['gen_ai.response.finish_reasons'] === 'max_tokens'
+                    ));
+                    const isFault = s.span_id === faultSpanId;
+                    const statusClass = isError ? 'error' : isAnomaly ? 'anomaly' : 'ok';
+                    const faultClass = isFault ? ' root-cause-span' : '';
+                    const layerClass = `layer-${s.layer}`;
+                    const barLeft = ((s.start_time_unix_nano - minTime) / totalRange * 100).toFixed(1);
+                    const barWidth = Math.max(((s.end_time_unix_nano - s.start_time_unix_nano) / totalRange * 100), 0.5).toFixed(1);
+                    const durationMs = s.duration_ms != null ? s.duration_ms.toFixed(0) : '?';
+
+                    html += `<div class="span-row">
+                        <div class="span-name ${statusClass}${faultClass}" style="padding-left:${indent}px">
+                            ${isFault ? '&#9654; ' : ''}${escapeHtml(s.name)}
+                            <span class="span-layer-tag ${layerClass}">${s.layer}</span>
+                        </div>
+                        <div class="span-bar-area">
+                            <div class="span-bar ${statusClass}" style="margin-left:${barLeft}%;width:${barWidth}%"></div>
+                        </div>
+                        <div class="span-duration">${durationMs}ms</div>
+                    </div>`;
+                });
+                html += `</div></div>`;
+            }
+
+            // Action items (full width)
             if (t.action_items && t.action_items.length > 0) {
-                html += `<div class="actions"><h2>Action Items</h2>`;
+                html += `<div class="detail-section full-width"><h3>Action Items</h3>`;
                 t.action_items.forEach(item => {
                     const teamMatch = item.match(/^\[([^\]]+)\]/);
                     const team = teamMatch ? teamMatch[1] : '';
@@ -258,7 +387,8 @@
                 html += `</div>`;
             }
 
-            container.innerHTML = html;
+            html += '</div>';
+            return html;
         }
 
         function escapeHtml(str) {
@@ -266,7 +396,7 @@
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        loadSamples();
+        init();
     </script>
 </body>
 </html>
