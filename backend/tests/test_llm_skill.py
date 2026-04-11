@@ -248,6 +248,41 @@ class TestParseOutput:
             result = parse_output(response)
             assert result["primary_owner"] == owner
 
+    @pytest.mark.parametrize("alias", ["none", "null", "n/a", "na", "nan", "", "NONE", "  none  "])
+    def test_unknown_aliases_normalized(self, alias):
+        """LLMs using 'none'/'null'/'n/a'/'' for primary_owner should be
+        normalized to 'unknown' instead of rejected.
+
+        Regression for c3_semantic_error where qwen3.6-plus returned
+        primary_owner='none', triggering a silent fallback to L1.
+        """
+        response = json.dumps({
+            "primary_owner": alias,
+            "confidence": 0.0,
+            "root_cause": "no fault indicators found",
+        })
+        result = parse_output(response)
+        assert result["primary_owner"] == "unknown"
+
+    def test_null_json_primary_owner_normalized(self):
+        """JSON null (Python None) for primary_owner → 'unknown'."""
+        response = '{"primary_owner": null, "confidence": 0.0, "root_cause": "x"}'
+        result = parse_output(response)
+        assert result["primary_owner"] == "unknown"
+
+    def test_co_responsible_aliases_normalized(self):
+        """Alias strings inside co_responsible should also be normalized."""
+        response = json.dumps({
+            "primary_owner": "model_team",
+            "co_responsible": ["agent_team", "none", None, "null"],
+            "confidence": 0.8,
+            "root_cause": "Test",
+        })
+        result = parse_output(response)
+        # The three alias variants all collapse to "unknown"; the real team stays.
+        assert result["co_responsible"].count("unknown") == 3
+        assert "agent_team" in result["co_responsible"]
+
 
 class TestBuildTriageResult:
     """Tests for build_triage_result function."""
@@ -356,6 +391,75 @@ class TestBuildTriageResult:
         result = build_triage_result(parsed, l1)
 
         assert len(result.action_items) == 2
+
+    def test_zero_confidence_with_team_coerced_to_unknown(self):
+        """Regression: LLM returns confidence=0 + a specific team → contradictory.
+
+        Coerce to UNKNOWN and stash the original guess in root_cause so the
+        user can still see what the LLM was thinking.
+        """
+        parsed = {
+            "primary_owner": "agent_team",
+            "co_responsible": ["model_team"],
+            "confidence": 0.0,
+            "root_cause": "No fault indicators found in trace",
+        }
+        l1 = self._make_l1_result()
+
+        result = build_triage_result(parsed, l1)
+
+        assert result.primary_owner == OwnerTeam.UNKNOWN
+        assert result.co_responsible == []
+        assert result.confidence == 0.0
+        # Original guess should be preserved for debugging.
+        assert "agent_team" in result.root_cause
+        assert "raw guess" in result.root_cause
+        assert "No fault indicators found" in result.root_cause
+
+    def test_near_zero_confidence_with_team_also_coerced(self):
+        """Confidence just below epsilon (0.04) is still contradictory."""
+        parsed = {
+            "primary_owner": "mcp_team",
+            "confidence": 0.04,
+            "root_cause": "maybe mcp",
+        }
+        l1 = self._make_l1_result()
+
+        result = build_triage_result(parsed, l1)
+
+        assert result.primary_owner == OwnerTeam.UNKNOWN
+        assert "mcp_team" in result.root_cause
+
+    def test_low_but_nonzero_confidence_preserved(self):
+        """Low-but-consistent confidence (e.g., 0.3) is a legitimate weak guess,
+        not contradictory. Must NOT be coerced."""
+        parsed = {
+            "primary_owner": "model_team",
+            "co_responsible": ["agent_team"],
+            "confidence": 0.3,
+            "root_cause": "Weak signal",
+        }
+        l1 = self._make_l1_result()
+
+        result = build_triage_result(parsed, l1)
+
+        assert result.primary_owner == OwnerTeam.MODEL_TEAM
+        assert result.confidence == 0.3
+        assert result.root_cause == "Weak signal"  # unmutated
+
+    def test_zero_confidence_with_unknown_owner_unchanged(self):
+        """LLM saying '{unknown, 0.0}' is self-consistent — don't touch it."""
+        parsed = {
+            "primary_owner": "unknown",
+            "confidence": 0.0,
+            "root_cause": "Cannot determine",
+        }
+        l1 = self._make_l1_result()
+
+        result = build_triage_result(parsed, l1)
+
+        assert result.primary_owner == OwnerTeam.UNKNOWN
+        assert result.root_cause == "Cannot determine"  # NOT mutated
 
 
 class TestInvokeLLM:

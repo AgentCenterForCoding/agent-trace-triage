@@ -179,6 +179,24 @@ def invoke_llm(
         raise LLMInvocationError(f"Unexpected error calling LLM: {e}")
 
 
+# Aliases LLMs commonly use to mean "I don't know". Normalized to "unknown"
+# during parsing so a flaky word choice doesn't trash the whole response.
+_UNKNOWN_OWNER_ALIASES = {"none", "null", "n/a", "na", "nan", ""}
+
+
+def _normalize_owner_alias(value: Any) -> Any:
+    """Map 'unknown' variants (None, 'none', 'null', 'n/a', ...) to 'unknown'.
+
+    Returns the value unchanged if it's not recognized as an alias — schema
+    validation downstream still rejects anything not in the allowed set.
+    """
+    if value is None:
+        return "unknown"
+    if isinstance(value, str) and value.strip().lower() in _UNKNOWN_OWNER_ALIASES:
+        return "unknown"
+    return value
+
+
 def parse_output(llm_response: str) -> dict[str, Any]:
     """Parse and validate LLM JSON output."""
     # Try to extract JSON from response (handle markdown code blocks)
@@ -207,6 +225,14 @@ def parse_output(llm_response: str) -> dict[str, Any]:
         if field not in result:
             raise LLMOutputParseError(f"Missing required field: {field}")
 
+    # Normalize owner aliases BEFORE schema validation so that LLMs saying
+    # "none"/"null"/"n/a" don't trigger a whole-response fallback to L1.
+    result["primary_owner"] = _normalize_owner_alias(result["primary_owner"])
+    if isinstance(result.get("co_responsible"), list):
+        result["co_responsible"] = [
+            _normalize_owner_alias(co) for co in result["co_responsible"]
+        ]
+
     # Validate primary_owner value
     valid_owners = {"agent_team", "model_team", "mcp_team", "skill_team", "user_interaction", "unknown"}
     if result["primary_owner"] not in valid_owners:
@@ -218,6 +244,12 @@ def parse_output(llm_response: str) -> dict[str, Any]:
         raise LLMOutputParseError(f"Confidence out of range: {confidence}")
 
     return result
+
+
+# Below this confidence, "primary_owner = specific team" is treated as
+# contradictory — the LLM is saying "I don't know" while still naming a team.
+# We coerce the result to UNKNOWN rather than passing on the contradiction.
+_ZERO_CONFIDENCE_EPSILON = 0.05
 
 
 def build_triage_result(
@@ -235,6 +267,8 @@ def build_triage_result(
         "unknown": OwnerTeam.UNKNOWN,
     }
     primary_owner = owner_map.get(parsed_output["primary_owner"], OwnerTeam.UNKNOWN)
+    confidence = parsed_output["confidence"]
+    root_cause = parsed_output["root_cause"]
 
     # Convert co_responsible
     co_responsible = [
@@ -243,13 +277,26 @@ def build_triage_result(
         if co != parsed_output["primary_owner"]  # Exclude primary from co_responsible
     ]
 
+    # Coerce contradictory output: LLM reported ~0 confidence but still named a
+    # concrete team. That's semantically "I don't know". Rewrite to UNKNOWN so
+    # downstream consumers aren't shown a fake attribution. Preserve the LLM's
+    # original guess inside root_cause for debuggability.
+    if confidence < _ZERO_CONFIDENCE_EPSILON and primary_owner != OwnerTeam.UNKNOWN:
+        root_cause = (
+            f"L2 could not determine fault with confidence "
+            f"(raw guess: {primary_owner.value} @ {confidence:.2f}). "
+            f"{root_cause}"
+        )
+        primary_owner = OwnerTeam.UNKNOWN
+        co_responsible = []
+
     return TriageResult(
         primary_owner=primary_owner,
         co_responsible=co_responsible,
-        confidence=parsed_output["confidence"],
+        confidence=confidence,
         fault_span=l1_result.fault_span,  # Keep L1's fault_span
         fault_chain=l1_result.fault_chain,  # Keep L1's fault_chain
-        root_cause=parsed_output["root_cause"],
+        root_cause=root_cause,
         action_items=parsed_output.get("action_items", []),
         source=TriageSource.LLM,
         reasoning=parsed_output.get("reasoning"),
