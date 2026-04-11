@@ -46,7 +46,9 @@ class PatternMatchCondition:
 @dataclass
 class TriageRule:
     """A single triage rule loaded from YAML."""
-    span_pattern: str = "*"
+    span_pattern: str = "*"  # Regex pattern match against span.name
+    span_name: Optional[str] = None  # Exact match against span.name (OpenCode trace)
+    layer: Optional[str] = None  # Match against get_effective_layer() result
     status: Optional[str] = None
     error_type: Optional[list[str]] = None
     error_contains: Optional[str] = None
@@ -113,6 +115,8 @@ def load_rules(path: str | Path) -> list[TriageRule]:
 
         rules.append(TriageRule(
             span_pattern=match.get("span_pattern", "*"),
+            span_name=match.get("span_name"),  # Exact match for OpenCode trace
+            layer=match.get("layer"),  # Match against effective layer
             status=match.get("status"),
             error_type=match.get("error_type"),
             error_contains=match.get("error_contains"),
@@ -155,15 +159,30 @@ def _match_pattern(name: str, pattern: str) -> bool:
 
 
 def _match_attributes(span: OTelSpan, required: dict[str, Any]) -> bool:
-    """Check if span attributes contain all required key-value pairs."""
+    """Check if span attributes contain all required key-value pairs.
+
+    Matching rules:
+    - If required value is a list: actual must be one of the values in the list
+    - If actual value is a list: required value must be contained in the list
+    - Otherwise: string comparison
+    """
     for key, value in required.items():
         actual = span.get_attr(key)
         if actual is None:
             return False
-        # Support list matching (any value in list)
+        # Required is a list: actual must be one of the allowed values
         if isinstance(value, list):
-            if actual not in value:
+            if isinstance(actual, list):
+                # Both are lists: check intersection
+                if not any(v in actual for v in value):
+                    return False
+            elif actual not in value:
                 return False
+        # Actual is a list: check if required value is contained
+        elif isinstance(actual, list):
+            if value not in actual:
+                return False
+        # Simple string/value comparison
         elif str(actual) != str(value):
             return False
     return True
@@ -175,8 +194,18 @@ def _match_single_span(span: OTelSpan, rule: TriageRule, tree: Optional[SpanTree
     if rule.pattern_match:
         return False
 
-    if rule.span_pattern != "*" and not _match_pattern(span.name, rule.span_pattern):
+    # Span name matching: span_name (exact) takes precedence over span_pattern (regex)
+    if rule.span_name:
+        if span.name.lower() != rule.span_name.lower():
+            return False
+    elif rule.span_pattern != "*" and not _match_pattern(span.name, rule.span_pattern):
         return False
+
+    # Layer matching: uses get_effective_layer for tool_call attribute awareness
+    if rule.layer:
+        effective_layer = get_effective_layer(span)
+        if effective_layer.value != rule.layer.lower():
+            return False
 
     if rule.status and span.status.value != rule.status:
         return False
