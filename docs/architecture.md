@@ -232,12 +232,102 @@ v1 讨论共识的关键测试点：
 - 规则引擎 + 三层算法
 - 20 个样本 Trace 验证
 
-### v2（规划）
-- LLM 兜底推理（语义层故障）
-- 跨 turn 因果分析（对话级归因）
-- 图算法 confidence 优化
-- 相似故障聚类
-- Agent Span Taxonomy 社区标准化
+### v2（规划）：混合归因架构
+
+#### 7.1 方案对比
+
+| 维度 | 规则引擎（v1） | LLM Skill | Prompt 直接推理 |
+|------|---------------|-----------|----------------|
+| 可解释性 | ✅ 高 | ⚠️ 中 | ❌ 低 |
+| 准确性 | ✅ 高（已覆盖场景） | ⚠️ 中高 | ⚠️ 中 |
+| 泛化能力 | ❌ 低 | ✅ 高 | ✅ 高 |
+| 延迟 | ✅ <100ms | ⚠️ 1-5s | ⚠️ 1-5s |
+| 成本 | ✅ 无 | ⚠️ Token | ⚠️ Token |
+| 离线可用 | ✅ 是 | ❌ 否 | ❌ 否 |
+
+#### 7.2 v2 混合架构
+
+```
+Trace 输入
+    │
+    ▼
+┌─────────────────────────────────────┐
+│  L1: 规则引擎（快速、确定性、低成本）  │
+│  confidence ≥ 0.8 → 直接输出         │
+└─────────────────────────────────────┘
+    │ confidence < 0.8 或 unknown
+    ▼
+┌─────────────────────────────────────┐
+│  L2: LLM Skill（兜底复杂/未知场景）   │
+│  • 结构化输入：span 树 + 错误链      │
+│  • 结构化输出：JSON 格式归因结果     │
+│  • 约束推理：四层模型 + 归因原则     │
+└─────────────────────────────────────┘
+    │
+    ▼
+   输出 TriageResult
+```
+
+#### 7.3 L2 LLM Skill 设计
+
+**输入结构**：
+```json
+{
+  "trace_summary": {
+    "total_spans": 15,
+    "error_spans": 2,
+    "layers": ["agent", "model", "mcp"]
+  },
+  "span_tree": [...],
+  "error_chain": [...],
+  "rule_engine_result": {
+    "matched_rules": [],
+    "confidence": 0.3,
+    "reason": "no matching pattern"
+  }
+}
+```
+
+**Prompt 核心约束**：
+```
+你是 Agent Trace 故障归因专家。基于四层架构模型（Agent/Model/MCP/Skill）和三层归因算法（直接归因→上游传播→容错缺失），分析 trace 数据并判定故障归属。
+
+归因原则：
+1. 找到拓扑最深的错误 span 作为初始候选
+2. 检查上游是否有参数异常/截断标记，若有则上溯根因
+3. 检查 Agent 层是否缺少应有的 retry/fallback，若缺失则加入共同责任方
+4. 非 ERROR 状态也可能是故障（如 finish_reasons=content_filter）
+
+输出 JSON 格式...
+```
+
+**输出结构**：
+```json
+{
+  "primary_owner": "model_team",
+  "co_responsible": ["agent_team"],
+  "confidence": 0.75,
+  "root_cause": "Model 输出被 content filter 拦截，Agent 未处理此异常",
+  "reasoning": "...",
+  "action_items": [
+    "Model 团队检查 prompt 是否触发安全策略",
+    "Agent 团队增加 content_filter 异常处理"
+  ]
+}
+```
+
+#### 7.4 v2 其他能力
+
+- **跨 turn 因果分析**：将 multi-turn 对话序列建模为有向时序图，定位"第 N 轮推理偏差导致后续错误"
+- **图算法 confidence 优化**：借鉴 MicroRCA 随机游走，当多候选根因并存时量化归因
+- **相似故障聚类**：相似 trace 聚类，发现系统性问题，减少重复派单
+- **Agent Span Taxonomy 标准化**：整理我们的 span 命名规范（agent.*/mcp.*/skill.*），提交 OTel GenAI SIG
+
+#### 7.5 v1 → v2 迁移策略
+
+1. **先积累**：v1 收集真实故障 trace + 人工标注归因结果
+2. **后训练**：用标注数据作为 few-shot 示例优化 L2 Skill prompt
+3. **渐进切换**：L1 规则引擎保持不变，低置信度场景逐步启用 L2
 
 ## 8. 目录结构
 
