@@ -135,10 +135,10 @@ class TestOpenCodeTraceSpans:
         span = list(parse_otlp_json(data).spans.values())[0]
         assert span.layer == SpanLayer.AGENT
 
-    def test_user_approval_span_is_agent_layer(self):
+    def test_user_approval_span_is_user_layer(self):
         data = _make_otlp([_make_raw_span("user_approval")])
         span = list(parse_otlp_json(data).spans.values())[0]
-        assert span.layer == SpanLayer.AGENT
+        assert span.layer == SpanLayer.USER
 
     def test_model_inference_span_is_model_layer(self):
         data = _make_otlp([_make_raw_span("model_inference")])

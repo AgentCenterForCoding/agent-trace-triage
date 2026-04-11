@@ -14,8 +14,7 @@ ResourceSpans
         │   ├── Span: model_inference # 模型推理
         │   └── Span: tool_call       # 工具调用
         │       └── Span: user_approval   # 用户审批
-        ├── Span: agent_run           # 子 Agent 执行
-        └── Span: direct_execution    # 直接执行（无 Agent）
+        └── Span: agent_run           # 子 Agent 执行
 ```
 
 ## 2. Span 公共属性
@@ -142,9 +141,7 @@ ResourceSpans
 }
 ```
 
-**父子关系**:
-- 若存在 `agent_run_id` → `parentSpanId` = Agent Run Span ID
-- 否则 → `parentSpanId` = Turn Span ID（直接执行场景）
+**父子关系**: `parentSpanId` = Agent Run Span ID
 
 ---
 
@@ -226,7 +223,8 @@ ResourceSpans
 | `tool_call` (tool_type=mcp) | MCP | mcp_team |
 | `tool_call` (tool_type=skill) | Skill | skill_team |
 | `tool_call` (tool_type=builtin) | Agent | agent_team |
-| `user_approval` | Agent | agent_team |
+| `user_approval` | User | user_interaction |
+| `user_approval` (decision=timeout) | User | user_interaction |
 
 ## 5. 关键 Attributes 用于定界
 
@@ -242,10 +240,11 @@ ResourceSpans
 
 ### 5.2 上游传播分析
 
-| 场景 | Span 模式 | 根因上溯 |
+| 场景 | Span 模式 | 根因归属 |
 |------|----------|---------|
-| Model 生成坏参数导致 Tool 失败 | `model_inference` 成功但输出无效 → `tool_call` 失败 | 根因上溯到 `model_inference` |
-| 用户长时间不响应导致超时 | `user_approval.wait_duration_ms` 过大 | 非系统故障，标记为 user_interaction |
+| Model 生成坏参数导致 Tool 失败 | `model_inference` 成功但输出无效 → `tool_call` 失败 | 根因上溯到 `model_inference`，归 model_team |
+| 用户长时间不响应导致超时 | `user_approval.decision = timeout` | 归 user_interaction（非系统故障） |
+| 用户拒绝操作 | `user_approval.decision = denied` | 归 user_interaction |
 
 ## 6. 完整 Trace 示例
 

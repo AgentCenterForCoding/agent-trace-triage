@@ -18,6 +18,7 @@ class SpanLayer(str, Enum):
     MODEL = "model"
     MCP = "mcp"
     SKILL = "skill"
+    USER = "user"
     UNKNOWN = "unknown"
 
 
@@ -27,6 +28,7 @@ class OwnerTeam(str, Enum):
     MODEL_TEAM = "model_team"
     MCP_TEAM = "mcp_team"
     SKILL_TEAM = "skill_team"
+    USER_INTERACTION = "user_interaction"
     UNKNOWN = "unknown"
 
 
@@ -88,17 +90,20 @@ def identify_span_layer(span_name: str) -> SpanLayer:
     name_lower = span_name.lower()
 
     # OpenCode trace span names (exact match)
-    opencode_agent_spans = {"turn", "agent_run", "user_approval", "direct_execution"}
+    opencode_agent_spans = {"turn", "agent_run"}
     opencode_model_spans = {"model_inference"}
+    opencode_user_spans = {"user_approval"}
     opencode_tool_span = "tool_call"  # Requires attribute check for tool_type
 
     if name_lower in opencode_agent_spans:
         return SpanLayer.AGENT
     elif name_lower in opencode_model_spans:
         return SpanLayer.MODEL
+    elif name_lower in opencode_user_spans:
+        return SpanLayer.USER
     elif name_lower == opencode_tool_span:
-        # tool_call layer depends on tool_type attribute, default to AGENT
-        # Actual layer will be determined by triage engine using attributes
+        # tool_call layer depends on tool_type attribute
+        # Actual layer will be determined by get_effective_layer using attributes
         return SpanLayer.UNKNOWN
 
     # Prefix-based naming convention
@@ -121,6 +126,7 @@ def layer_to_owner(layer: SpanLayer) -> OwnerTeam:
         SpanLayer.MODEL: OwnerTeam.MODEL_TEAM,
         SpanLayer.MCP: OwnerTeam.MCP_TEAM,
         SpanLayer.SKILL: OwnerTeam.SKILL_TEAM,
+        SpanLayer.USER: OwnerTeam.USER_INTERACTION,
         SpanLayer.UNKNOWN: OwnerTeam.UNKNOWN,
     }
     return mapping.get(layer, OwnerTeam.UNKNOWN)

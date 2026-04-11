@@ -42,10 +42,15 @@ def _parse_span(raw: dict[str, Any]) -> OTelSpan:
     # Parse attributes from key-value array format
     attributes = _parse_attributes(raw.get("attributes", []))
 
-    # Parse status
+    # Parse status - support both string (OpenCode) and int (OTLP) formats
     status_obj = raw.get("status", {})
-    status_code = status_obj.get("code", 0)
-    status = SpanStatus.OK if status_code == 1 else (SpanStatus.ERROR if status_code == 2 else SpanStatus.UNSET)
+    status_code = status_obj.get("code", "UNSET")
+    if isinstance(status_code, str):
+        # OpenCode Trace format: "OK", "ERROR", "UNSET"
+        status = SpanStatus[status_code] if status_code in SpanStatus.__members__ else SpanStatus.UNSET
+    else:
+        # OTLP numeric format: 0=UNSET, 1=OK, 2=ERROR
+        status = SpanStatus.OK if status_code == 1 else (SpanStatus.ERROR if status_code == 2 else SpanStatus.UNSET)
 
     return OTelSpan(
         trace_id=raw.get("traceId", ""),
