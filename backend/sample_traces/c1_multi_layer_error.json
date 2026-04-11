@@ -1,0 +1,61 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c1",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000020000000000",
+          "status": {"code": "ERROR", "message": "Turn failed"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c1_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c1",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000019900000000",
+          "status": {"code": "ERROR", "message": "Max retries exceeded"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c1_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_c1",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000006000000000",
+          "status": {"code": "ERROR", "message": "API timeout"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "TimeoutError"}}
+          ]
+        },
+        {
+          "traceId": "trace_c1",
+          "spanId": "span_tool_1",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000007000000000",
+          "endTimeUnixNano": "1700000010000000000",
+          "status": {"code": "ERROR", "message": "Connection refused"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c1_001"}},
+            {"key": "function_name", "value": {"stringValue": "read_file"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ConnectionRefused"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

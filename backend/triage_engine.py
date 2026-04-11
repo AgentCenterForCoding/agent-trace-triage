@@ -13,6 +13,7 @@ from models import (
     SpanLayer,
     SpanTree,
     TriageResult,
+    TriageSource,
     get_effective_layer,
     layer_to_owner,
 )
@@ -740,3 +741,45 @@ def _build_action_items(
         items.append(f"[upstream] Root cause shifted due to: {'; '.join(upstream_reasons)}")
 
     return items
+
+
+# ---------------------------------------------------------------------------
+# Hybrid triage (L1 + L2)
+# ---------------------------------------------------------------------------
+
+def triage_hybrid(
+    tree: SpanTree,
+    rules: list[TriageRule],
+    llm_config: Optional["LLMConfig"] = None,
+) -> TriageResult:
+    """
+    Run hybrid fault attribution: L1 rule engine + optional L2 LLM inference.
+
+    When llm_config is provided and L1 confidence is below threshold,
+    invokes L2 LLM for better attribution.
+    """
+    # Import here to avoid circular imports
+    from router import LLMConfig, should_invoke_l2
+    from llm_skill import l2_inference
+
+    # Step 1: Run L1 rule engine
+    l1_result = triage(tree, rules)
+    l1_result.source = TriageSource.RULES
+
+    # Step 2: Check if L2 should be invoked
+    if llm_config is None:
+        return l1_result
+
+    if not should_invoke_l2(l1_result, llm_config):
+        return l1_result
+
+    # Step 3: Invoke L2 LLM inference
+    l2_result = l2_inference(tree, l1_result, llm_config)
+
+    return l2_result
+
+
+# Type hint for optional import
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from router import LLMConfig

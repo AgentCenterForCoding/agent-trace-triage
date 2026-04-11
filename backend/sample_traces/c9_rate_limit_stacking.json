@@ -1,0 +1,74 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c9",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000095000000000",
+          "status": {"code": "ERROR", "message": "Agent timeout after rate limits"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c9_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c9",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000094900000000",
+          "status": {"code": "ERROR", "message": "Timeout"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c9_001"}},
+            {"key": "agent.timeout_ms", "value": {"intValue": 90000}},
+            {"key": "terminate_reason", "value": {"stringValue": "timeout"}}
+          ]
+        },
+        {
+          "traceId": "trace_c9",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000002000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}},
+            {"key": "retry_after_ms", "value": {"intValue": 30000}}
+          ]
+        },
+        {
+          "traceId": "trace_c9",
+          "spanId": "span_model_2",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000032000000000",
+          "endTimeUnixNano": "1700000033000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}},
+            {"key": "retry_after_ms", "value": {"intValue": 60000}}
+          ]
+        },
+        {
+          "traceId": "trace_c9",
+          "spanId": "span_model_3",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000093000000000",
+          "endTimeUnixNano": "1700000094000000000",
+          "status": {"code": "ERROR", "message": "Cancelled due to agent timeout"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "Cancelled"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

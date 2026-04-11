@@ -1,0 +1,88 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000018000000000",
+          "status": {"code": "ERROR", "message": "Nested agent failed"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c8_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_agent_main",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000017900000000",
+          "status": {"code": "ERROR", "message": "Sub-agent execution failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c8_main"}},
+            {"key": "agent_name", "value": {"stringValue": "orchestrator"}},
+            {"key": "terminate_reason", "value": {"stringValue": "sub_agent_error"}}
+          ]
+        },
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_model_main",
+          "parentSpanId": "span_agent_main",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000002000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}}
+          ]
+        },
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_agent_sub",
+          "parentSpanId": "span_agent_main",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000017500000000",
+          "status": {"code": "ERROR", "message": "Model inference failed repeatedly"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c8_sub"}},
+            {"key": "agent_name", "value": {"stringValue": "researcher"}},
+            {"key": "parent_agent_run_id", "value": {"stringValue": "run_c8_main"}},
+            {"key": "terminate_reason", "value": {"stringValue": "model_error"}}
+          ]
+        },
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_model_sub_1",
+          "parentSpanId": "span_agent_sub",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000003000000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}},
+            {"key": "retry_after_ms", "value": {"intValue": 5000}}
+          ]
+        },
+        {
+          "traceId": "trace_c8",
+          "spanId": "span_model_sub_2",
+          "parentSpanId": "span_agent_sub",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000009000000000",
+          "endTimeUnixNano": "1700000014000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}},
+            {"key": "retry_after_ms", "value": {"intValue": 10000}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

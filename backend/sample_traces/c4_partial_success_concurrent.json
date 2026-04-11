@@ -1,0 +1,120 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c4_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000011900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c4_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000002000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-sonnet"}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_tool_1",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000004000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c4_001"}},
+            {"key": "function_name", "value": {"stringValue": "fetch_data_1"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_tool_2",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "ERROR", "message": "Database connection timeout"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c4_002"}},
+            {"key": "function_name", "value": {"stringValue": "fetch_data_2"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "TimeoutError"}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_tool_3",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000003500000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c4_003"}},
+            {"key": "function_name", "value": {"stringValue": "fetch_data_3"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_tool_4",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000006000000000",
+          "status": {"code": "ERROR", "message": "Service unavailable"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c4_004"}},
+            {"key": "function_name", "value": {"stringValue": "fetch_data_4"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ServiceUnavailable"}}
+          ]
+        },
+        {
+          "traceId": "trace_c4",
+          "spanId": "span_tool_5",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002100000000",
+          "endTimeUnixNano": "1700000004500000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c4_005"}},
+            {"key": "function_name", "value": {"stringValue": "fetch_data_5"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

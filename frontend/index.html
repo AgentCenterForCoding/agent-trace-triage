@@ -27,8 +27,8 @@
 
         /* Trace list table */
         .trace-list { border: 1px solid #d1d9e0; border-radius: 8px; overflow: hidden; }
-        .trace-header-row { display: grid; grid-template-columns: 32px 1fr 120px 130px 100px 80px; align-items: center; padding: 10px 16px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; font-size: 12px; font-weight: 600; color: #656d76; text-transform: uppercase; letter-spacing: 0.5px; }
-        .trace-row { display: grid; grid-template-columns: 32px 1fr 120px 130px 100px 80px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eaeef2; cursor: pointer; transition: background 0.1s; }
+        .trace-header-row { display: grid; grid-template-columns: 32px 1fr 80px 120px 130px 100px 80px; align-items: center; padding: 10px 16px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; font-size: 12px; font-weight: 600; color: #656d76; text-transform: uppercase; letter-spacing: 0.5px; }
+        .trace-row { display: grid; grid-template-columns: 32px 1fr 80px 120px 130px 100px 80px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eaeef2; cursor: pointer; transition: background 0.1s; }
         .trace-row:last-child { border-bottom: none; }
         .trace-row:hover { background: #f6f8fa; }
         .trace-row.expanded { background: #f6f8fa; border-bottom-color: #d1d9e0; }
@@ -54,6 +54,7 @@
         .owner-badge.model_team { background: #fbefff; color: #8250df; border: 1px solid #c297ff44; }
         .owner-badge.mcp_team { background: #fff8c5; color: #9a6700; border: 1px solid #d4a72c44; }
         .owner-badge.skill_team { background: #dafbe1; color: #1a7f37; border: 1px solid #4ac26b44; }
+        .owner-badge.user_interaction { background: #ffebe9; color: #cf222e; border: 1px solid #cf222e33; }
         .owner-badge.unknown { background: #eaeef2; color: #656d76; border: 1px solid #afb8c133; }
 
         .row-confidence { font-size: 12px; color: #656d76; }
@@ -94,6 +95,7 @@
         .layer-model { background: #fbefff; color: #8250df; }
         .layer-mcp { background: #fff8c5; color: #9a6700; }
         .layer-skill { background: #dafbe1; color: #1a7f37; }
+        .layer-user { background: #ffebe9; color: #cf222e; }
         .layer-unknown { background: #eaeef2; color: #656d76; }
         .span-bar-area { flex: 1; padding: 0 8px; }
         .span-bar { height: 4px; border-radius: 2px; min-width: 2px; }
@@ -117,6 +119,52 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .empty-state { text-align: center; color: #656d76; padding: 60px 20px; font-size: 14px; }
+
+        /* Settings button */
+        .settings-btn { background: none; border: 1px solid #d1d9e0; border-radius: 6px; padding: 7px 12px; cursor: pointer; font-size: 13px; color: #656d76; display: flex; align-items: center; gap: 6px; transition: border-color 0.15s, color 0.15s; }
+        .settings-btn:hover { border-color: #0969da; color: #0969da; }
+        .settings-btn.llm-active { border-color: #8250df; color: #8250df; }
+        .settings-btn svg { width: 14px; height: 14px; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: #ffffff; border-radius: 12px; width: 480px; max-width: 90vw; box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #d1d9e0; }
+        .modal-header h2 { font-size: 16px; color: #1f2328; }
+        .modal-close { background: none; border: none; font-size: 20px; color: #656d76; cursor: pointer; padding: 4px 8px; }
+        .modal-close:hover { color: #1f2328; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #d1d9e0; display: flex; justify-content: flex-end; gap: 12px; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #1f2328; margin-bottom: 6px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 12px; border: 1px solid #d1d9e0; border-radius: 6px; font-size: 13px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.1); }
+        .form-group .hint { font-size: 11px; color: #656d76; margin-top: 4px; }
+
+        .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle .slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #d1d9e0; border-radius: 24px; transition: background 0.2s; }
+        .toggle .slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #ffffff; border-radius: 50%; transition: transform 0.2s; }
+        .toggle input:checked + .slider { background: #8250df; }
+        .toggle input:checked + .slider::before { transform: translateX(20px); }
+        .toggle-label { font-size: 13px; color: #1f2328; font-weight: 500; }
+
+        .btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .btn-secondary { background: #f6f8fa; border: 1px solid #d1d9e0; color: #1f2328; }
+        .btn-secondary:hover { background: #eaeef2; }
+        .btn-primary { background: #8250df; border: 1px solid #8250df; color: #ffffff; }
+        .btn-primary:hover { background: #6f42c1; }
+
+        /* Source badge */
+        .source-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+        .source-badge.rules { background: #ddf4ff; color: #0969da; }
+        .source-badge.llm { background: #fbefff; color: #8250df; }
+
+        /* Reasoning section */
+        .reasoning-text { background: #fbefff; border: 1px solid #e2c6ff; border-radius: 4px; padding: 10px 12px; margin-top: 10px; font-size: 12px; line-height: 1.5; color: #1f2328; white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -127,16 +175,76 @@
                 <p class="subtitle">OTel Trace-based fault attribution for Agent debugging</p>
             </div>
             <div class="header-actions">
+                <button class="settings-btn" id="settingsBtn" onclick="openSettings()">
+                    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg>
+                    L2 LLM
+                </button>
                 <label class="upload-label" for="fileInput">+ Upload Trace</label>
                 <input type="file" id="fileInput" class="file-input" accept=".json" onchange="uploadFile(event)">
             </div>
         </header>
 
+        <!-- LLM Settings Modal -->
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>L2 LLM Settings</h2>
+                    <button class="modal-close" onclick="closeSettings()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="toggle-row">
+                        <label class="toggle">
+                            <input type="checkbox" id="llmEnabled">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label">Enable L2 LLM Inference</span>
+                    </div>
+                    <div class="form-group">
+                        <label>API Base URL</label>
+                        <input type="text" id="llmBaseUrl" value="https://coding.dashscope.aliyuncs.com/apps/anthropic">
+                        <div class="hint">Default: DashScope Anthropic-compatible endpoint</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input type="text" id="llmModel" value="qwen3.6-plus">
+                        <div class="hint">Model name for the LLM API</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confidence Threshold</label>
+                        <input type="number" id="llmThreshold" value="0.8" min="0" max="1" step="0.1">
+                        <div class="hint">Trigger L2 when L1 confidence &lt; threshold (0.0-1.0)</div>
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="llmApiKey" placeholder="Enter your API key">
+                        <div class="hint">Required for L2 inference</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Timeout (seconds)</label>
+                        <input type="number" id="llmTimeout" value="30" min="5" max="120">
+                    </div>
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #eaeef2">
+                        <button class="btn btn-secondary" id="testConnBtn" onclick="testConnection()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:6px">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg>
+                            Test Connection
+                        </button>
+                        <div id="testResult" style="margin-top:8px;font-size:12px;display:none"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
         <div class="stats-bar" id="statsBar" style="display:none">
             <div class="stat-item"><span class="stat-dot error"></span><span class="stat-value" id="statError">0</span> Error</div>
             <div class="stat-item"><span class="stat-dot warning"></span><span class="stat-value" id="statWarning">0</span> Anomaly</div>
             <div class="stat-item"><span class="stat-dot ok"></span><span class="stat-value" id="statOk">0</span> OK</div>
-            <div class="stat-item" style="margin-left:auto">Total: <span class="stat-value" id="statTotal">0</span> traces</div>
+            <div class="stat-item" style="margin-left:auto"><span class="source-badge rules">L1</span> <span class="stat-value" id="statL1">0</span></div>
+            <div class="stat-item"><span class="source-badge llm">L2</span> <span class="stat-value" id="statL2">0</span></div>
+            <div class="stat-item">Total: <span class="stat-value" id="statTotal">0</span> traces</div>
         </div>
 
         <div id="traceListContainer">
@@ -149,15 +257,156 @@
 
         let allTraces = [];
 
+        // LLM Config management
+        const LLM_CONFIG_KEY = 'agent-trace-triage-llm-config';
+        const DEFAULT_LLM_CONFIG = {
+            enabled: false,
+            baseUrl: 'https://coding.dashscope.aliyuncs.com/apps/anthropic',
+            model: 'qwen3.6-plus',
+            threshold: 0.8,
+            apiKey: '',
+            timeout: 30
+        };
+
+        function loadLLMConfig() {
+            try {
+                const stored = localStorage.getItem(LLM_CONFIG_KEY);
+                if (stored) {
+                    return { ...DEFAULT_LLM_CONFIG, ...JSON.parse(stored) };
+                }
+            } catch (e) {}
+            return { ...DEFAULT_LLM_CONFIG };
+        }
+
+        function saveLLMConfig(config) {
+            localStorage.setItem(LLM_CONFIG_KEY, JSON.stringify(config));
+            updateSettingsButtonState();
+        }
+
+        function getLLMHeaders() {
+            const config = loadLLMConfig();
+            if (!config.enabled || !config.apiKey) return {};
+            return {
+                'X-LLM-Enabled': 'true',
+                'X-LLM-Base-URL': config.baseUrl,
+                'X-LLM-Model': config.model,
+                'X-LLM-Threshold': String(config.threshold),
+                'X-LLM-API-Key': config.apiKey,
+                'X-LLM-Timeout': String(config.timeout)
+            };
+        }
+
+        function updateSettingsButtonState() {
+            const config = loadLLMConfig();
+            const btn = document.getElementById('settingsBtn');
+            if (config.enabled && config.apiKey) {
+                btn.classList.add('llm-active');
+                btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg> L2 Active`;
+            } else {
+                btn.classList.remove('llm-active');
+                btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.04.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.103-.303c-.066-.019-.176-.011-.299.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.212.224l-.288 1.107c-.17.645-.716 1.195-1.459 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.065-1.289-.615-1.459-1.26l-.288-1.107c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.049-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.04-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.103.303c.066.019.176.011.299-.071.214-.143.437-.272.668-.386.133-.066.194-.158.212-.224l.288-1.107C5.847.645 6.393.095 7.136.03A8.12 8.12 0 0 1 8 0ZM5.5 8a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z"/></svg> L2 LLM`;
+            }
+        }
+
+        function openSettings() {
+            const config = loadLLMConfig();
+            document.getElementById('llmEnabled').checked = config.enabled;
+            document.getElementById('llmBaseUrl').value = config.baseUrl;
+            document.getElementById('llmModel').value = config.model;
+            document.getElementById('llmThreshold').value = config.threshold;
+            document.getElementById('llmApiKey').value = config.apiKey;
+            document.getElementById('llmTimeout').value = config.timeout;
+            document.getElementById('settingsModal').classList.add('open');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('open');
+        }
+
+        function saveSettings() {
+            const config = {
+                enabled: document.getElementById('llmEnabled').checked,
+                baseUrl: document.getElementById('llmBaseUrl').value,
+                model: document.getElementById('llmModel').value,
+                threshold: parseFloat(document.getElementById('llmThreshold').value) || 0.8,
+                apiKey: document.getElementById('llmApiKey').value,
+                timeout: parseInt(document.getElementById('llmTimeout').value) || 30
+            };
+            saveLLMConfig(config);
+            closeSettings();
+            // Re-analyze traces with new config
+            init();
+        }
+
+        async function testConnection() {
+            const btn = document.getElementById('testConnBtn');
+            const resultDiv = document.getElementById('testResult');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:12px;height:12px;border-width:2px;margin-right:0"></span> Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
+            resultDiv.style.color = '#656d76';
+
+            const config = {
+                baseUrl: document.getElementById('llmBaseUrl').value,
+                model: document.getElementById('llmModel').value,
+                apiKey: document.getElementById('llmApiKey').value,
+                timeout: parseInt(document.getElementById('llmTimeout').value) || 30,
+            };
+
+            if (!config.apiKey) {
+                resultDiv.style.color = '#cf222e';
+                resultDiv.textContent = 'Please enter an API Key first';
+                btn.disabled = false;
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> Test Connection';
+                return;
+            }
+
+            try {
+                const headers = {
+                    'X-LLM-Enabled': 'true',
+                    'X-LLM-Base-URL': config.baseUrl,
+                    'X-LLM-Model': config.model,
+                    'X-LLM-API-Key': config.apiKey,
+                    'X-LLM-Timeout': String(config.timeout),
+                };
+                const res = await fetch(`${API}/api/llm/test-connection`, { method: 'POST', headers });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    resultDiv.style.color = '#1a7f37';
+                    resultDiv.innerHTML = `&#10003; ${escapeHtml(data.message)}`;
+                } else {
+                    resultDiv.style.color = '#cf222e';
+                    resultDiv.innerHTML = `&#10007; ${escapeHtml(data.message)}`;
+                }
+            } catch (e) {
+                resultDiv.style.color = '#cf222e';
+                resultDiv.textContent = 'Connection failed: ' + e.message;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-1.06-1.06L6.25 9.69 5.28 8.72a.751.751 0 0 0-1.06 1.06l1.5 1.5a.749.749 0 0 0 1.06 0l5-5Z"/></svg> Test Connection';
+        }
+
+        // Close modal on backdrop click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeSettings();
+            }
+        });
+
         async function init() {
+            updateSettingsButtonState();
             try {
                 const res = await fetch(`${API}/api/samples`);
                 const samples = await res.json();
 
+                const llmHeaders = getLLMHeaders();
+
                 // Analyze all samples in parallel
                 const analyses = await Promise.all(
                     samples.map(s =>
-                        fetch(`${API}/api/samples/${s.name}`)
+                        fetch(`${API}/api/samples/${s.name}`, { headers: llmHeaders })
                             .then(r => r.json())
                             .then(data => ({ name: s.name, ...data }))
                             .catch(err => ({ name: s.name, error: err.message }))
@@ -178,7 +427,12 @@
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const res = await fetch(`${API}/api/trace/upload`, { method: 'POST', body: formData });
+                const llmHeaders = getLLMHeaders();
+                const res = await fetch(`${API}/api/trace/upload`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: llmHeaders
+                });
                 const data = await res.json();
                 allTraces.unshift({ name: file.name.replace('.json', ''), ...data, uploaded: true });
                 renderList();
@@ -207,18 +461,23 @@
             const container = document.getElementById('traceListContainer');
 
             // Compute stats
-            let errorCount = 0, warningCount = 0, okCount = 0;
+            let errorCount = 0, warningCount = 0, okCount = 0, l1Count = 0, l2Count = 0;
             allTraces.forEach(item => {
                 const s = getTraceStatus(item);
                 if (s === 'error') errorCount++;
                 else if (s === 'anomaly') warningCount++;
                 else okCount++;
+                const src = (item.triage || {}).source || 'rules';
+                if (src === 'llm') l2Count++;
+                else l1Count++;
             });
 
             document.getElementById('statsBar').style.display = 'flex';
             document.getElementById('statError').textContent = errorCount;
             document.getElementById('statWarning').textContent = warningCount;
             document.getElementById('statOk').textContent = okCount;
+            document.getElementById('statL1').textContent = l1Count;
+            document.getElementById('statL2').textContent = l2Count;
             document.getElementById('statTotal').textContent = allTraces.length;
 
             if (allTraces.length === 0) {
@@ -230,6 +489,7 @@
             html += `<div class="trace-header-row">
                 <div></div>
                 <div>Trace</div>
+                <div>Source</div>
                 <div>Status</div>
                 <div>Owner</div>
                 <div>Confidence</div>
@@ -246,12 +506,17 @@
                 const rowClass = status === 'error' ? 'has-error' : status === 'anomaly' ? 'has-warning' : 'all-ok';
                 const displayName = item.name.replace(/_/g, ' ');
 
+                const source = t.source || 'rules';
+                const sourceLabel = source === 'llm' ? 'L2 LLM' : 'L1 Rules';
+                const sourceClass = source === 'llm' ? 'llm' : 'rules';
+
                 html += `<div class="trace-row ${rowClass}" onclick="toggleDetail(${idx})" id="row-${idx}">
                     <div class="row-expand" id="expand-${idx}">&#9654;</div>
                     <div class="row-name">
                         <span class="trace-label">${escapeHtml(displayName)}</span>
                         ${item.uploaded ? '<span style="font-size:10px;color:#0969da;margin-left:6px">uploaded</span>' : ''}
                     </div>
+                    <div><span class="source-badge ${sourceClass}">${sourceLabel}</span></div>
                     <div class="row-status"><span class="status-badge ${status}">${getStatusLabel(status)}</span></div>
                     <div class="row-owner"><span class="owner-badge ${owner}">${owner.replace('_', ' ')}</span></div>
                     <div class="row-confidence">
@@ -295,8 +560,11 @@
             let html = '<div class="detail-grid">';
 
             // Triage summary
+            const source = t.source || 'rules';
+            const sourceBadge = `<span class="source-badge ${source}">${source === 'llm' ? 'L2 LLM' : 'L1 Rules'}</span>`;
+
             html += `<div class="detail-section">
-                <h3>Triage Result</h3>
+                <h3>Triage Result ${sourceBadge}</h3>
                 <div class="triage-summary">
                     <div style="margin-bottom:8px">
                         <strong>Primary:</strong> <span class="owner-badge ${t.primary_owner || 'unknown'}">${(t.primary_owner || 'unknown').replace('_', ' ')}</span>
@@ -308,6 +576,9 @@
             }
             if (t.root_cause) {
                 html += `<div class="root-cause-text">${escapeHtml(t.root_cause)}</div>`;
+            }
+            if (t.reasoning) {
+                html += `<div class="reasoning-text">${escapeHtml(t.reasoning)}</div>`;
             }
             html += `</div></div>`;
 

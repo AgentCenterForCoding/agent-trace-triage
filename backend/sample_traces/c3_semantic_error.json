@@ -1,0 +1,59 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c3",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000006000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c3_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c3",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000005900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c3_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c3",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000002500000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-sonnet"}}
+          ]
+        },
+        {
+          "traceId": "trace_c3",
+          "spanId": "span_tool",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002600000000",
+          "endTimeUnixNano": "1700000005500000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c3_001"}},
+            {"key": "function_name", "value": {"stringValue": "get_user_profile"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}},
+            {"key": "result", "value": {"stringValue": "{\"error\": \"record_not_found\", \"code\": 404, \"message\": \"User profile does not exist\"}"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

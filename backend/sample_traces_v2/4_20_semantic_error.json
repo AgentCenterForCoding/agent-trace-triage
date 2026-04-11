@@ -1,0 +1,96 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "opencode-trace-v2"},
+          "spans": [
+            {
+              "traceId": "20202020202020202020202020202020",
+              "spanId": "2020000000000001",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000006000000000",
+              "status": {"code": 2, "message": "Semantic error in MCP response"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_020"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_020"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "20202020202020202020202020202020",
+              "spanId": "2020000000000002",
+              "parentSpanId": "2020000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000005900000000",
+              "status": {"code": 2, "message": "Failed to parse MCP response"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_020"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "20202020202020202020202020202020",
+              "spanId": "2020000000000003",
+              "parentSpanId": "2020000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {"code": 1},
+              "attributes": [
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "20202020202020202020202020202020",
+              "spanId": "2020000000000004",
+              "parentSpanId": "2020000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000002200000000",
+              "endTimeUnixNano": "1700000004200000000",
+              "status": {"code": 2, "message": "MCP returned error in content: File not found"},
+              "attributes": [
+                {"key": "tool_call_id", "value": {"stringValue": "tc_020"}},
+                {"key": "function_name", "value": {"stringValue": "get_file_info"}},
+                {"key": "tool_type", "value": {"stringValue": "mcp"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "SemanticError"}},
+                {"key": "mcp.server", "value": {"stringValue": "filesystem"}},
+                {"key": "mcp.response.has_error", "value": {"boolValue": true}},
+                {"key": "mcp.response.error_in_content", "value": {"stringValue": "File not found: /nonexistent/path"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "20202020202020202020202020202020",
+              "spanId": "2020000000000005",
+              "parentSpanId": "2020000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000004300000000",
+              "endTimeUnixNano": "1700000005500000000",
+              "status": {"code": 1},
+              "attributes": [
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "received_mcp_error", "value": {"boolValue": true}}
+              ],
+              "events": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000025000000000",
+          "status": {"code": "ERROR", "message": "Max retries exceeded"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c6_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000024900000000",
+          "status": {"code": "ERROR", "message": "Max retries"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c6_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "max_retries"}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000004000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "output_preview", "value": {"stringValue": "{ invalid json without closing brace..."}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_tool_1",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000004100000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "ERROR", "message": "JSON parse error: Unexpected end of input"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c6_001"}},
+            {"key": "function_name", "value": {"stringValue": "execute_code"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "JSONParseError"}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_model_2",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000006000000000",
+          "endTimeUnixNano": "1700000010000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "output_preview", "value": {"stringValue": "{ still invalid json..."}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_tool_2",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000010100000000",
+          "endTimeUnixNano": "1700000011000000000",
+          "status": {"code": "ERROR", "message": "JSON parse error: Expected property name"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c6_002"}},
+            {"key": "function_name", "value": {"stringValue": "execute_code"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "JSONParseError"}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_model_3",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000012000000000",
+          "endTimeUnixNano": "1700000016000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "output_preview", "value": {"stringValue": "{ broken again..."}}
+          ]
+        },
+        {
+          "traceId": "trace_c6",
+          "spanId": "span_tool_3",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000016100000000",
+          "endTimeUnixNano": "1700000017000000000",
+          "status": {"code": "ERROR", "message": "JSON parse error: Unexpected token"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c6_003"}},
+            {"key": "function_name", "value": {"stringValue": "execute_code"}},
+            {"key": "tool_type", "value": {"stringValue": "builtin"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "JSONParseError"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

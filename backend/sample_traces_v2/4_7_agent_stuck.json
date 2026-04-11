@@ -1,0 +1,50 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "opencode-trace-v2"},
+          "spans": [
+            {
+              "traceId": "07070707070707070707070707070707",
+              "spanId": "0707000000000001",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000300000000000",
+              "status": {"code": 2, "message": "Agent stuck in loop"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_007"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_007"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "07070707070707070707070707070707",
+              "spanId": "0707000000000002",
+              "parentSpanId": "0707000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000299900000000",
+              "status": {"code": 2, "message": "LoopDetected: Agent exceeded 50 iterations without progress"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_007"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "turn_count", "value": {"intValue": "50"}},
+                {"key": "agent.state", "value": {"stringValue": "stuck"}},
+                {"key": "agent.loop_detected", "value": {"boolValue": true}}
+              ],
+              "events": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

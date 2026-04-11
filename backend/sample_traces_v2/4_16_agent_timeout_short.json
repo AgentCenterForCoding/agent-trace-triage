@@ -1,0 +1,64 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "opencode-trace-v2"},
+          "spans": [
+            {
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000001",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000010000000000",
+              "status": {"code": 2, "message": "Agent timeout too short"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_016"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_016"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000002",
+              "parentSpanId": "1616000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000009900000000",
+              "status": {"code": 2, "message": "TimeoutError: Agent timeout (10s) too short for task"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_016"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "timeout"}},
+                {"key": "agent.timeout_ms", "value": {"intValue": "10000"}},
+                {"key": "agent.timeout_config", "value": {"stringValue": "user_override"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000003",
+              "parentSpanId": "1616000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000009500000000",
+              "status": {"code": 1},
+              "attributes": [
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "cancelled_by_agent", "value": {"boolValue": true}}
+              ],
+              "events": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

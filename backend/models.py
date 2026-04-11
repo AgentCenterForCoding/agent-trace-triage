@@ -69,6 +69,12 @@ class SpanTree(BaseModel):
     orphans: list[str] = Field(default_factory=list)  # spans with missing parent
 
 
+class TriageSource(str, Enum):
+    """Source of triage result."""
+    RULES = "rules"
+    LLM = "llm"
+
+
 class TriageResult(BaseModel):
     """Result of fault attribution analysis."""
     primary_owner: OwnerTeam
@@ -78,6 +84,9 @@ class TriageResult(BaseModel):
     fault_chain: list[OTelSpan] = Field(default_factory=list)
     root_cause: str
     action_items: list[str] = Field(default_factory=list)
+    # L2 LLM Skill fields
+    source: TriageSource = TriageSource.RULES
+    reasoning: Optional[str] = None  # LLM reasoning process (only for L2)
 
 
 def identify_span_layer(span_name: str) -> SpanLayer:

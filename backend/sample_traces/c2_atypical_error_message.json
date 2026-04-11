@@ -1,0 +1,59 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c2",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c2_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c2",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000007900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c2_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c2",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000003000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-sonnet"}}
+          ]
+        },
+        {
+          "traceId": "trace_c2",
+          "spanId": "span_tool",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000003100000000",
+          "endTimeUnixNano": "1700000007000000000",
+          "status": {"code": "ERROR", "message": "ResourceExhausted: custom_quota_exceeded_xyz_v2_internal_limit_reached"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c2_001"}},
+            {"key": "function_name", "value": {"stringValue": "query_database"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ResourceExhausted: custom_quota_exceeded_xyz_v2_internal_limit_reached"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

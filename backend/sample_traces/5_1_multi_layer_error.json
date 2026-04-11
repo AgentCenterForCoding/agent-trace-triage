@@ -1,0 +1,77 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_1",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000015000000000",
+          "status": {"code": "ERROR", "message": "Turn failed due to multiple errors"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_complex_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_1",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000014900000000",
+          "status": {"code": "ERROR", "message": "Agent execution failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_multi_001"}},
+            {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_1",
+          "spanId": "span_model_1",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000005000000000",
+          "status": {"code": "ERROR", "message": "Model returned incomplete response"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "input_token_count", "value": {"intValue": 5000}},
+            {"key": "output_token_count", "value": {"intValue": 100}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "max_tokens"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_1",
+          "spanId": "span_tool_1",
+          "parentSpanId": "span_model_1",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000005100000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "ERROR", "message": "MCP server connection failed"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_001"}},
+            {"key": "function_name", "value": {"stringValue": "read_file"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "ConnectionError"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_1",
+          "spanId": "span_model_2",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000008100000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "ERROR", "message": "Rate limit exceeded"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "error_type", "value": {"stringValue": "RateLimitError"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

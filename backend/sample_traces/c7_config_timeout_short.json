@@ -1,0 +1,63 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c7",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000005500000000",
+          "status": {"code": "ERROR", "message": "Agent timeout"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c7_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c7",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000005400000000",
+          "status": {"code": "ERROR", "message": "Timeout"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c7_001"}},
+            {"key": "agent.timeout_ms", "value": {"intValue": 5000}},
+            {"key": "terminate_reason", "value": {"stringValue": "timeout"}}
+          ]
+        },
+        {
+          "traceId": "trace_c7",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000000200000000",
+          "endTimeUnixNano": "1700000000800000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-sonnet"}}
+          ]
+        },
+        {
+          "traceId": "trace_c7",
+          "spanId": "span_tool",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000000900000000",
+          "endTimeUnixNano": "1700000005300000000",
+          "status": {"code": "ERROR", "message": "Cancelled"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c7_001"}},
+            {"key": "function_name", "value": {"stringValue": "run_large_query"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "Cancelled"}},
+            {"key": "duration_ms", "value": {"intValue": 4400}},
+            {"key": "expected_duration_ms", "value": {"intValue": 8000}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

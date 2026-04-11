@@ -1,0 +1,78 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "opencode-trace-v2"},
+          "spans": [
+            {
+              "traceId": "06060606060606060606060606060606",
+              "spanId": "0606000000000001",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000005000000000",
+              "status": {"code": 2, "message": "Skill execution error"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_006"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_006"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "06060606060606060606060606060606",
+              "spanId": "0606000000000002",
+              "parentSpanId": "0606000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000004900000000",
+              "status": {"code": 2, "message": "Skill runtime error"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_006"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "06060606060606060606060606060606",
+              "spanId": "0606000000000003",
+              "parentSpanId": "0606000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000001500000000",
+              "status": {"code": 1},
+              "attributes": [
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "06060606060606060606060606060606",
+              "spanId": "0606000000000004",
+              "parentSpanId": "0606000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000001600000000",
+              "endTimeUnixNano": "1700000004600000000",
+              "status": {"code": 2, "message": "RuntimeError: Division by zero in skill 'calc-metrics'"},
+              "attributes": [
+                {"key": "tool_call_id", "value": {"stringValue": "tc_006"}},
+                {"key": "function_name", "value": {"stringValue": "calc-metrics"}},
+                {"key": "tool_type", "value": {"stringValue": "skill"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "RuntimeError"}}
+              ],
+              "events": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

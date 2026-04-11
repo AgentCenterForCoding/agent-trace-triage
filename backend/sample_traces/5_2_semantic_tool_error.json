@@ -1,0 +1,63 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_5_2",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000010000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_semantic_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_2",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000009900000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_semantic_001"}},
+            {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+            {"key": "terminate_reason", "value": {"stringValue": "success"}}
+          ]
+        },
+        {
+          "traceId": "trace_5_2",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000004000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+          ]
+        },
+        {
+          "traceId": "trace_5_2",
+          "spanId": "span_tool",
+          "parentSpanId": "span_model",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000004100000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_semantic"}},
+            {"key": "function_name", "value": {"stringValue": "search_files"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": true}},
+            {"key": "mcp.tool.result", "value": {"stringValue": "{\"error\": \"permission_denied\", \"message\": \"Access to /etc/passwd denied\"}"}},
+            {"key": "mcp.tool.semantic_error", "value": {"boolValue": true}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

@@ -1,0 +1,62 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c10",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000012000000000",
+          "status": {"code": "ERROR", "message": "Multiple errors encountered"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c10_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c10",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000011900000000",
+          "status": {"code": "ERROR", "message": "Execution failed"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c10_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "error"}}
+          ]
+        },
+        {
+          "traceId": "trace_c10",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000004000000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-opus"}},
+            {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "content_filter"}]}}},
+            {"key": "gen_ai.response.finish_reasons", "value": {"stringValue": "content_filter"}}
+          ]
+        },
+        {
+          "traceId": "trace_c10",
+          "spanId": "span_tool",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000004100000000",
+          "endTimeUnixNano": "1700000008000000000",
+          "status": {"code": "ERROR", "message": "Schema validation failed: missing required field 'action'"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c10_001"}},
+            {"key": "function_name", "value": {"stringValue": "execute_action"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "SchemaValidationError"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}

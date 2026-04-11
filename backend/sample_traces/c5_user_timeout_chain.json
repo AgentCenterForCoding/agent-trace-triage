@@ -1,0 +1,74 @@
+{
+  "resourceSpans": [{
+    "scopeSpans": [{
+      "spans": [
+        {
+          "traceId": "trace_c5",
+          "spanId": "span_turn",
+          "name": "turn",
+          "startTimeUnixNano": "1700000000000000000",
+          "endTimeUnixNano": "1700000035000000000",
+          "status": {"code": "ERROR", "message": "User approval timed out"},
+          "attributes": [
+            {"key": "session.id", "value": {"stringValue": "sess_c5_001"}}
+          ]
+        },
+        {
+          "traceId": "trace_c5",
+          "spanId": "span_agent",
+          "parentSpanId": "span_turn",
+          "name": "agent_run",
+          "startTimeUnixNano": "1700000000100000000",
+          "endTimeUnixNano": "1700000034900000000",
+          "status": {"code": "ERROR", "message": "Cancelled due to user timeout"},
+          "attributes": [
+            {"key": "agent_run_id", "value": {"stringValue": "run_c5_001"}},
+            {"key": "terminate_reason", "value": {"stringValue": "user_timeout"}}
+          ]
+        },
+        {
+          "traceId": "trace_c5",
+          "spanId": "span_model",
+          "parentSpanId": "span_agent",
+          "name": "model_inference",
+          "startTimeUnixNano": "1700000001000000000",
+          "endTimeUnixNano": "1700000002500000000",
+          "status": {"code": "OK"},
+          "attributes": [
+            {"key": "model", "value": {"stringValue": "claude-3-sonnet"}}
+          ]
+        },
+        {
+          "traceId": "trace_c5",
+          "spanId": "span_tool",
+          "parentSpanId": "span_agent",
+          "name": "tool_call",
+          "startTimeUnixNano": "1700000002600000000",
+          "endTimeUnixNano": "1700000034000000000",
+          "status": {"code": "ERROR", "message": "Cancelled"},
+          "attributes": [
+            {"key": "tool_call_id", "value": {"stringValue": "tc_c5_001"}},
+            {"key": "function_name", "value": {"stringValue": "delete_files"}},
+            {"key": "tool_type", "value": {"stringValue": "mcp"}},
+            {"key": "success", "value": {"boolValue": false}},
+            {"key": "error_type", "value": {"stringValue": "Cancelled"}}
+          ]
+        },
+        {
+          "traceId": "trace_c5",
+          "spanId": "span_approval",
+          "parentSpanId": "span_tool",
+          "name": "user_approval",
+          "startTimeUnixNano": "1700000003000000000",
+          "endTimeUnixNano": "1700000033000000000",
+          "status": {"code": "ERROR", "message": "User did not respond in time"},
+          "attributes": [
+            {"key": "decision", "value": {"stringValue": "timeout"}},
+            {"key": "wait_duration_ms", "value": {"intValue": 30000}},
+            {"key": "prompt", "value": {"stringValue": "Confirm deletion of 50 files?"}}
+          ]
+        }
+      ]
+    }]
+  }]
+}
