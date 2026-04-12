@@ -3,112 +3,74 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "18bbeea39ab5148ba5ddbd2130bd93ad",
-              "spanId": "b526688c3bd9194f",
-              "name": "agent.dispatch",
+              "traceId": "09090909090909090909090909090909",
+              "spanId": "0909000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000005000000000",
-              "status": {
-                "code": 2,
-                "message": "Tool call failed"
-              },
-              "attributes": [],
+              "status": {"code": 2, "message": "Tool call failed due to bad params"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_009"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_009"}}
+              ],
               "events": []
             },
             {
-              "traceId": "18bbeea39ab5148ba5ddbd2130bd93ad",
-              "spanId": "eb880c073d9e84af",
-              "name": "gen_ai.client",
+              "traceId": "09090909090909090909090909090909",
+              "spanId": "0909000000000002",
+              "parentSpanId": "0909000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000004900000000",
+              "status": {"code": 2, "message": "Tool validation error"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_009"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "09090909090909090909090909090909",
+              "spanId": "0909000000000003",
+              "parentSpanId": "0909000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000100000000",
               "endTimeUnixNano": "1700000002100000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "tool_use"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}},
+                {"key": "output.tool_params_valid", "value": {"boolValue": false}}
               ],
-              "events": [],
-              "parentSpanId": "b526688c3bd9194f"
+              "events": []
             },
             {
-              "traceId": "18bbeea39ab5148ba5ddbd2130bd93ad",
-              "spanId": "3ebbc2fc872aa9d6",
-              "name": "agent.execute_tool",
+              "traceId": "09090909090909090909090909090909",
+              "spanId": "0909000000000004",
+              "parentSpanId": "0909000000000003",
+              "name": "tool_call",
               "startTimeUnixNano": "1700000002200000000",
-              "endTimeUnixNano": "1700000004700000000",
-              "status": {
-                "code": 2,
-                "message": "Tool call failed"
-              },
+              "endTimeUnixNano": "1700000004500000000",
+              "status": {"code": 2, "message": "ValidationError: 'file_path' is required but missing"},
               "attributes": [
-                {
-                  "key": "mcp.tool.input_valid",
-                  "value": {
-                    "boolValue": false
-                  }
-                }
+                {"key": "tool_call_id", "value": {"stringValue": "tc_009"}},
+                {"key": "function_name", "value": {"stringValue": "read_file"}},
+                {"key": "tool_type", "value": {"stringValue": "builtin"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "ValidationError"}},
+                {"key": "input_valid", "value": {"boolValue": false}}
               ],
-              "events": [],
-              "parentSpanId": "b526688c3bd9194f"
-            },
-            {
-              "traceId": "18bbeea39ab5148ba5ddbd2130bd93ad",
-              "spanId": "dcf1670ea7f8d1f9",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002300000000",
-              "endTimeUnixNano": "1700000002800000000",
-              "status": {
-                "code": 2,
-                "message": "ValidationError: Missing required parameter 'path'"
-              },
-              "attributes": [
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "filesystem"
-                  }
-                },
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "read_file"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "ValidationError"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "3ebbc2fc872aa9d6"
+              "events": []
             }
           ]
         }

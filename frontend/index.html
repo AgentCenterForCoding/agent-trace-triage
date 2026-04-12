@@ -413,14 +413,30 @@
                 const res = await fetch(`${API}/api/samples`);
                 const samples = await res.json();
 
-                // Just load the list without analyzing — analysis is on-demand
                 allTraces = samples.map(s => ({
                     name: s.name,
                     analyzed: false,
-                    analyzing: false,
+                    analyzing: true,
                     triage: null,
                     spans: null,
                     span_count: 0,
+                }));
+
+                renderList();
+
+                // 默认全量 L1 分析（不带 LLM headers → 纯规则引擎，极快）
+                await Promise.all(allTraces.map(async (item) => {
+                    try {
+                        const r = await fetch(`${API}/api/samples/${item.name}`);
+                        const data = await r.json();
+                        item.analyzed = true;
+                        item.triage = data.triage;
+                        item.spans = data.spans;
+                        item.span_count = data.span_count || (data.spans ? data.spans.length : 0);
+                        item.trace_id = data.trace_id;
+                        item.raw_trace = data.raw_trace;
+                    } catch (e) {}
+                    item.analyzing = false;
                 }));
 
                 renderList();
@@ -572,7 +588,7 @@
             }
 
             const llmConfig = loadLLMConfig();
-            const llmReady = llmConfig.enabled && llmConfig.apiKey;
+            const llmReady = !!(llmConfig.enabled && llmConfig.apiKey);
 
             let html = '<div class="trace-list">';
             html += `<div class="trace-header-row">
@@ -609,20 +625,13 @@
                     sourceBadge = `<span class="source-badge ${srcClass}">${srcLabel}</span>`;
                 }
 
-                // Action button
+                // Action button — 始终提供归因分析（点击可重新分析）
                 let actionHtml = '';
                 if (item.analyzing) {
                     actionHtml = `<button class="analyze-btn" disabled><span class="spinner-sm"></span>分析中</button>`;
-                } else if (!analyzed) {
-                    // Not analyzed yet: if LLM enabled, go straight to L1+L2 hybrid
-                    if (llmReady) {
-                        actionHtml = `<button class="analyze-btn l2" onclick="event.stopPropagation();analyzeTrace(${idx}, true)">L1+L2 分析</button>`;
-                    } else {
-                        actionHtml = `<button class="analyze-btn" onclick="event.stopPropagation();analyzeTrace(${idx}, false)">分析</button>`;
-                    }
-                } else if (llmReady && source !== 'llm') {
-                    // Already L1 analyzed, offer L2 upgrade
-                    actionHtml = `<button class="analyze-btn l2" onclick="event.stopPropagation();analyzeTrace(${idx}, true)">L2 深度分析</button>`;
+                } else {
+                    const useL2 = llmReady;
+                    actionHtml = `<button class="analyze-btn${useL2 ? ' l2' : ''}" onclick="event.stopPropagation();analyzeTrace(${idx}, ${useL2})">归因分析</button>`;
                 }
 
                 html += `<div class="trace-row ${rowClass}" onclick="${analyzed ? `toggleDetail(${idx})` : ''}" id="row-${idx}" style="${analyzed ? 'cursor:pointer' : 'cursor:default'}">

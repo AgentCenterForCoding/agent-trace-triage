@@ -3,91 +3,76 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
-              "spanId": "c620d353d3a9528d",
-              "name": "agent.dispatch",
+              "traceId": "12121212121212121212121212121212",
+              "spanId": "1212000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
-              "endTimeUnixNano": "1700000005000000000",
-              "status": {
-                "code": 2,
-                "message": "Tool execution failed"
-              },
-              "attributes": [],
+              "endTimeUnixNano": "1700000004000000000",
+              "status": {"code": 2, "message": "MCP tool failed without retry"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_012"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_012"}}
+              ],
               "events": []
             },
             {
-              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
-              "spanId": "885eebc645e717af",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000002100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "12121212121212121212121212121212",
+              "spanId": "1212000000000002",
+              "parentSpanId": "1212000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000003900000000",
+              "status": {"code": 2, "message": "Tool failed, no fallback"},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "tool_use"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_012"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "agent.has_retry", "value": {"boolValue": false}},
+                {"key": "agent.has_fallback", "value": {"boolValue": false}}
               ],
-              "events": [],
-              "parentSpanId": "c620d353d3a9528d"
+              "events": []
             },
             {
-              "traceId": "8896e231944215ed9ade3e9b8929a0cf",
-              "spanId": "195ff61e1614465e",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002300000000",
-              "endTimeUnixNano": "1700000004300000000",
-              "status": {
-                "code": 2,
-                "message": "ServerError: 503 Service temporarily unavailable"
-              },
+              "traceId": "12121212121212121212121212121212",
+              "spanId": "1212000000000003",
+              "parentSpanId": "1212000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000001500000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "github"
-                  }
-                },
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "create_pull_request"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "ServerError"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "c620d353d3a9528d"
+              "events": []
+            },
+            {
+              "traceId": "12121212121212121212121212121212",
+              "spanId": "1212000000000004",
+              "parentSpanId": "1212000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000001600000000",
+              "endTimeUnixNano": "1700000003600000000",
+              "status": {"code": 2, "message": "TransientError: Database connection pool exhausted"},
+              "attributes": [
+                {"key": "tool_call_id", "value": {"stringValue": "tc_012"}},
+                {"key": "function_name", "value": {"stringValue": "query_database"}},
+                {"key": "tool_type", "value": {"stringValue": "mcp"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "TransientError"}},
+                {"key": "mcp.server", "value": {"stringValue": "postgres"}},
+                {"key": "error.is_transient", "value": {"boolValue": true}}
+              ],
+              "events": []
             }
           ]
         }

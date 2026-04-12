@@ -3,98 +3,58 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "6bcdd81dbd2481d614f26c7489842098",
-              "spanId": "799267cd1e561fea",
-              "name": "agent.dispatch",
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
-              "endTimeUnixNano": "1700000005500000000",
-              "status": {
-                "code": 2,
-                "message": "Tool call timed out"
-              },
+              "endTimeUnixNano": "1700000010000000000",
+              "status": {"code": 2, "message": "Agent timeout too short"},
               "attributes": [
-                {
-                  "key": "agent.timeout_ms",
-                  "value": {
-                    "intValue": "5000"
-                  }
-                }
+                {"key": "session.id", "value": {"stringValue": "sess_016"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_016"}}
               ],
               "events": []
             },
             {
-              "traceId": "6bcdd81dbd2481d614f26c7489842098",
-              "spanId": "0100277b2f742727",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000002100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000002",
+              "parentSpanId": "1616000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000009900000000",
+              "status": {"code": 2, "message": "TimeoutError: Agent timeout (10s) too short for task"},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "tool_use"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_016"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "timeout"}},
+                {"key": "agent.timeout_ms", "value": {"intValue": "10000"}},
+                {"key": "agent.timeout_config", "value": {"stringValue": "user_override"}}
               ],
-              "events": [],
-              "parentSpanId": "799267cd1e561fea"
+              "events": []
             },
             {
-              "traceId": "6bcdd81dbd2481d614f26c7489842098",
-              "spanId": "ee90ca009c2f4406",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002300000000",
-              "endTimeUnixNano": "1700000008300000000",
-              "status": {
-                "code": 2,
-                "message": "CancelledError: Operation cancelled by caller after 6000ms"
-              },
+              "traceId": "16161616161616161616161616161616",
+              "spanId": "1616000000000003",
+              "parentSpanId": "1616000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000009500000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "code-search"
-                  }
-                },
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "semantic_search"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "CancelledError"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "cancelled_by_agent", "value": {"boolValue": true}}
               ],
-              "events": [],
-              "parentSpanId": "799267cd1e561fea"
+              "events": []
             }
           ]
         }

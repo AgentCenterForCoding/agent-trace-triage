@@ -3,149 +3,90 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "99e59518e6b20955722f028df6766902",
-              "spanId": "8dfbbe98cc720a67",
-              "name": "agent.dispatch",
+              "traceId": "17171717171717171717171717171717",
+              "spanId": "1717000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000008000000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 2, "message": "Unexpected agent failure"},
               "attributes": [
-                {
-                  "key": "agent.state",
-                  "value": {
-                    "stringValue": "completed"
-                  }
-                }
+                {"key": "session.id", "value": {"stringValue": "sess_017"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_017"}}
               ],
               "events": []
             },
             {
-              "traceId": "99e59518e6b20955722f028df6766902",
-              "spanId": "c8a9caa7e270d87e",
-              "name": "gen_ai.client",
+              "traceId": "17171717171717171717171717171717",
+              "spanId": "1717000000000002",
+              "parentSpanId": "1717000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000007900000000",
+              "status": {"code": 2, "message": "Agent failed with no clear cause"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_017"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "agent.error_handling", "value": {"stringValue": "swallowed"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "17171717171717171717171717171717",
+              "spanId": "1717000000000003",
+              "parentSpanId": "1717000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000100000000",
               "endTimeUnixNano": "1700000002100000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "tool_use"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "8dfbbe98cc720a67"
+              "events": []
             },
             {
-              "traceId": "99e59518e6b20955722f028df6766902",
-              "spanId": "f79088484ede8a2b",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002500000000",
-              "endTimeUnixNano": "1700000005500000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "17171717171717171717171717171717",
+              "spanId": "1717000000000004",
+              "parentSpanId": "1717000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000002200000000",
+              "endTimeUnixNano": "1700000005200000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "read_file"
-                  }
-                },
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "filesystem"
-                  }
-                }
+                {"key": "tool_call_id", "value": {"stringValue": "tc_017_1"}},
+                {"key": "function_name", "value": {"stringValue": "read_file"}},
+                {"key": "tool_type", "value": {"stringValue": "builtin"}},
+                {"key": "success", "value": {"boolValue": true}}
               ],
-              "events": [],
-              "parentSpanId": "8dfbbe98cc720a67"
+              "events": []
             },
             {
-              "traceId": "99e59518e6b20955722f028df6766902",
-              "spanId": "3239bc94cda810ac",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002500000000",
-              "endTimeUnixNano": "1700000006500000000",
-              "status": {
-                "code": 2,
-                "message": "ServerError: File not found"
-              },
+              "traceId": "17171717171717171717171717171717",
+              "spanId": "1717000000000005",
+              "parentSpanId": "1717000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000005300000000",
+              "endTimeUnixNano": "1700000007300000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "search_code"
-                  }
-                },
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "github"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "ServerError"
-                  }
-                }
+                {"key": "tool_call_id", "value": {"stringValue": "tc_017_2"}},
+                {"key": "function_name", "value": {"stringValue": "run_command"}},
+                {"key": "tool_type", "value": {"stringValue": "builtin"}},
+                {"key": "success", "value": {"boolValue": true}},
+                {"key": "command.exit_code", "value": {"intValue": "1"}},
+                {"key": "command.stderr", "value": {"stringValue": "Error: Permission denied"}}
               ],
-              "events": [],
-              "parentSpanId": "8dfbbe98cc720a67"
-            },
-            {
-              "traceId": "99e59518e6b20955722f028df6766902",
-              "spanId": "5481b2db1f12cff0",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000002500000000",
-              "endTimeUnixNano": "1700000005000000000",
-              "status": {
-                "code": 1
-              },
-              "attributes": [
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "list_files"
-                  }
-                },
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "filesystem"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "8dfbbe98cc720a67"
+              "events": []
             }
           ]
         }

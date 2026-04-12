@@ -605,7 +605,7 @@ class TestSystemPrompt:
 
     def test_prompt_contains_four_layer_model(self):
         """Test prompt describes four-layer architecture."""
-        assert "Four-Layer Architecture" in SYSTEM_PROMPT
+        assert "四层架构模型" in SYSTEM_PROMPT
         assert "agent_team" in SYSTEM_PROMPT
         assert "model_team" in SYSTEM_PROMPT
         assert "mcp_team" in SYSTEM_PROMPT
@@ -613,13 +613,14 @@ class TestSystemPrompt:
 
     def test_prompt_contains_three_layer_algorithm(self):
         """Test prompt describes three-layer attribution algorithm."""
-        assert "Three-Layer Attribution" in SYSTEM_PROMPT
-        assert "Direct Attribution" in SYSTEM_PROMPT
-        assert "Upstream Propagation" in SYSTEM_PROMPT
-        assert "Fault Tolerance" in SYSTEM_PROMPT
+        assert "三层归因算法" in SYSTEM_PROMPT
+        assert "直接归因" in SYSTEM_PROMPT
+        assert "上游传播" in SYSTEM_PROMPT
+        assert "容错分析" in SYSTEM_PROMPT
 
     def test_prompt_specifies_json_output(self):
         """Test prompt requires JSON output format."""
         assert "JSON" in SYSTEM_PROMPT
         assert "primary_owner" in SYSTEM_PROMPT
         assert "confidence" in SYSTEM_PROMPT
+        assert "中文" in SYSTEM_PROMPT

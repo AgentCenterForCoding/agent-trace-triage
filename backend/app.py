@@ -25,7 +25,7 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).parent
 SAMPLE_DIR = BASE_DIR / "sample_traces"
-RULES_PATH = BASE_DIR / "rules.yaml"
+RULES_PATH = BASE_DIR / "rules_v2.yaml"
 
 # Load rules at startup
 _rules = load_rules(RULES_PATH) if RULES_PATH.exists() else []

@@ -10,7 +10,7 @@ from models import OwnerTeam, SpanLayer
 from trace_parser import parse_otlp_json
 from triage_engine import load_rules, triage
 
-RULES_PATH = Path(__file__).parent.parent / "rules.yaml"
+RULES_PATH = Path(__file__).parent.parent / "rules_v2.yaml"
 SAMPLES_DIR = Path(__file__).parent.parent / "sample_traces"
 
 
@@ -81,9 +81,10 @@ class TestBoundaryScenarios:
         assert OwnerTeam.AGENT_TEAM in result.co_responsible
 
     def test_4_11_cumulative_timeout(self):
-        """All children OK but total exceeds timeout → Agent issue."""
+        """Cumulative timeout → model ERROR is direct cause, Agent co-responsible."""
         result = _load_and_triage("4_11_cumulative_timeout")
-        assert result.primary_owner == OwnerTeam.AGENT_TEAM
+        assert result.primary_owner == OwnerTeam.MODEL_TEAM
+        assert OwnerTeam.AGENT_TEAM in result.co_responsible
 
     def test_4_12_mcp_no_retry(self):
         """MCP failure + no retry → primary MCP, co Agent."""
@@ -98,9 +99,9 @@ class TestBoundaryScenarios:
 
 class TestCoreBoundaryScenarios:
     def test_4_13_tool_loop(self):
-        """Tool use loop detection. Should detect model_team."""
+        """Tool use loop detection → Agent should break the loop."""
         result = _load_and_triage("4_13_tool_loop")
-        assert result.primary_owner == OwnerTeam.MODEL_TEAM
+        assert result.primary_owner == OwnerTeam.AGENT_TEAM
 
     def test_4_14_content_filter(self):
         """Content filter (non-ERROR). Should detect model_team."""

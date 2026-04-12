@@ -3,162 +3,100 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
-              "spanId": "aa10000000000001",
-              "name": "agent.dispatch",
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000001500000000",
-              "status": {
-                "code": 2,
-                "message": "Rate limit exceeded after rapid successive calls"
-              },
+              "status": {"code": 2, "message": "Rate limit exceeded"},
               "attributes": [
-                {
-                  "key": "agent.call_frequency",
-                  "value": {
-                    "stringValue": "excessive"
-                  }
-                },
-                {
-                  "key": "agent.calls_per_minute",
-                  "value": {
-                    "intValue": "120"
-                  }
-                }
+                {"key": "session.id", "value": {"stringValue": "sess_018"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_018"}}
               ],
               "events": []
             },
             {
-              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
-              "spanId": "aa10000000000002",
-              "name": "gen_ai.client",
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000002",
+              "parentSpanId": "1818000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000001400000000",
+              "status": {"code": 2, "message": "Rate limit exceeded after rapid calls"},
+              "attributes": [
+                {"key": "agent_run_id", "value": {"stringValue": "run_018"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "agent.call_frequency", "value": {"stringValue": "excessive"}},
+                {"key": "agent.calls_per_minute", "value": {"intValue": "120"}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000003",
+              "parentSpanId": "1818000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000100000000",
               "endTimeUnixNano": "1700000000300000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-3-opus"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "stop"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "aa10000000000001"
+              "events": []
             },
             {
-              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
-              "spanId": "aa10000000000003",
-              "name": "gen_ai.client",
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000004",
+              "parentSpanId": "1818000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000350000000",
               "endTimeUnixNano": "1700000000550000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-3-opus"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "stop"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "aa10000000000001"
+              "events": []
             },
             {
-              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
-              "spanId": "aa10000000000004",
-              "name": "gen_ai.client",
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000005",
+              "parentSpanId": "1818000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000600000000",
               "endTimeUnixNano": "1700000000800000000",
-              "status": {
-                "code": 1
-              },
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-3-opus"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "stop"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "aa10000000000001"
+              "events": []
             },
             {
-              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
-              "spanId": "aa10000000000005",
-              "name": "gen_ai.client",
+              "traceId": "18181818181818181818181818181818",
+              "spanId": "1818000000000006",
+              "parentSpanId": "1818000000000002",
+              "name": "model_inference",
               "startTimeUnixNano": "1700000000850000000",
               "endTimeUnixNano": "1700000001200000000",
-              "status": {
-                "code": 2,
-                "message": "RateLimitError: 429 Too Many Requests"
-              },
+              "status": {"code": 2, "message": "RateLimitError: 429 Too Many Requests"},
               "attributes": [
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-3-opus"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "RateLimitError"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.error_code",
-                  "value": {
-                    "intValue": "429"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "error.type", "value": {"stringValue": "RateLimitError"}},
+                {"key": "error.http_code", "value": {"intValue": "429"}}
               ],
-              "events": [],
-              "parentSpanId": "aa10000000000001"
+              "events": []
             }
           ]
         }

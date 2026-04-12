@@ -3,97 +3,59 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "0a78c40eaf7c2848634648d6acbb35cf",
-              "spanId": "2cd42f6869e8fe60",
-              "name": "agent.dispatch",
+              "traceId": "02020202020202020202020202020202",
+              "spanId": "0202000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
-              "endTimeUnixNano": "1700000005200000000",
-              "status": {
-                "code": 2,
-                "message": "Parse error"
-              },
-              "attributes": [],
+              "endTimeUnixNano": "1700000005000000000",
+              "status": {"code": 2, "message": "Invalid model output"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_002"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_002"}}
+              ],
               "events": []
             },
             {
-              "traceId": "0a78c40eaf7c2848634648d6acbb35cf",
-              "spanId": "b583075501af1d3a",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000004100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "02020202020202020202020202020202",
+              "spanId": "0202000000000002",
+              "parentSpanId": "0202000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000004900000000",
+              "status": {"code": 2, "message": "Failed to parse model output"},
               "attributes": [
-                {
-                  "key": "gen_ai.system",
-                  "value": {
-                    "stringValue": "anthropic"
-                  }
-                },
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-sonnet-4-6"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "end_turn"
-                  }
-                },
-                {
-                  "key": "gen_ai.usage.output_tokens",
-                  "value": {
-                    "intValue": "1500"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_002"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
               ],
-              "events": [],
-              "parentSpanId": "2cd42f6869e8fe60"
+              "events": []
             },
             {
-              "traceId": "0a78c40eaf7c2848634648d6acbb35cf",
-              "spanId": "69cd30006b7059b5",
-              "name": "agent.parse",
-              "startTimeUnixNano": "1700000004200000000",
-              "endTimeUnixNano": "1700000004250000000",
-              "status": {
-                "code": 2,
-                "message": "JSON parse error: Unexpected token at position 0"
-              },
+              "traceId": "02020202020202020202020202020202",
+              "spanId": "0202000000000003",
+              "parentSpanId": "0202000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {"code": 2, "message": "Model output malformed: JSONDecodeError"},
               "attributes": [
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "JSONDecodeError"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "input_token_count", "value": {"intValue": "2000"}},
+                {"key": "output_token_count", "value": {"intValue": "500"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "output.malformed", "value": {"boolValue": true}},
+                {"key": "output.parse_error", "value": {"stringValue": "JSONDecodeError: Expecting property name"}}
               ],
-              "events": [],
-              "parentSpanId": "2cd42f6869e8fe60"
+              "events": []
             }
           ]
         }

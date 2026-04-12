@@ -3,91 +3,73 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "a90abfe5b4084682beb870a156272c2f",
-              "spanId": "ea431a5036ece15d",
-              "name": "agent.dispatch",
+              "traceId": "04040404040404040404040404040404",
+              "spanId": "0404000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000004500000000",
-              "status": {
-                "code": 2,
-                "message": "Tool execution failed"
-              },
-              "attributes": [],
+              "status": {"code": 2, "message": "Tool execution failed"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_004"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_004"}}
+              ],
               "events": []
             },
             {
-              "traceId": "a90abfe5b4084682beb870a156272c2f",
-              "spanId": "f3e5b31bc01f353c",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000002100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "04040404040404040404040404040404",
+              "spanId": "0404000000000002",
+              "parentSpanId": "0404000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000004400000000",
+              "status": {"code": 2, "message": "MCP tool error"},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "tool_use"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_004"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
               ],
-              "events": [],
-              "parentSpanId": "ea431a5036ece15d"
+              "events": []
             },
             {
-              "traceId": "a90abfe5b4084682beb870a156272c2f",
-              "spanId": "b350e585bf760a4a",
-              "name": "mcp.call",
+              "traceId": "04040404040404040404040404040404",
+              "spanId": "0404000000000003",
+              "parentSpanId": "0404000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {"code": 1},
+              "attributes": [
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_use"}]}}}
+              ],
+              "events": []
+            },
+            {
+              "traceId": "04040404040404040404040404040404",
+              "spanId": "0404000000000004",
+              "parentSpanId": "0404000000000003",
+              "name": "tool_call",
               "startTimeUnixNano": "1700000002200000000",
               "endTimeUnixNano": "1700000004200000000",
-              "status": {
-                "code": 2,
-                "message": "ServerError: Internal server error in tool 'search_code'"
-              },
+              "status": {"code": 2, "message": "ServerError: Internal server error in tool 'search_code'"},
               "attributes": [
-                {
-                  "key": "mcp.server",
-                  "value": {
-                    "stringValue": "github"
-                  }
-                },
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "search_code"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "ServerError"
-                  }
-                }
+                {"key": "tool_call_id", "value": {"stringValue": "tc_004"}},
+                {"key": "function_name", "value": {"stringValue": "search_code"}},
+                {"key": "tool_type", "value": {"stringValue": "mcp"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "ServerError"}},
+                {"key": "mcp.server", "value": {"stringValue": "github"}}
               ],
-              "events": [],
-              "parentSpanId": "ea431a5036ece15d"
+              "events": []
             }
           ]
         }

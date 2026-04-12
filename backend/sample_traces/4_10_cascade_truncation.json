@@ -3,109 +3,75 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
-              "spanId": "6d64b8a508555069",
-              "name": "agent.dispatch",
+              "traceId": "10101010101010101010101010101010",
+              "spanId": "1010000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000006000000000",
-              "status": {
-                "code": 2,
-                "message": "Parse error"
-              },
-              "attributes": [],
+              "status": {"code": 2, "message": "Cascade failure from truncation"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_010"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_010"}}
+              ],
               "events": []
             },
             {
-              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
-              "spanId": "3da4eb3215f1a867",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000004100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "10101010101010101010101010101010",
+              "spanId": "1010000000000002",
+              "parentSpanId": "1010000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000005900000000",
+              "status": {"code": 2, "message": "Tool failed after truncated output"},
               "attributes": [
-                {
-                  "key": "gen_ai.system",
-                  "value": {
-                    "stringValue": "anthropic"
-                  }
-                },
-                {
-                  "key": "gen_ai.request.model",
-                  "value": {
-                    "stringValue": "claude-opus-4-6"
-                  }
-                },
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "max_tokens"
-                  }
-                },
-                {
-                  "key": "gen_ai.usage.output_tokens",
-                  "value": {
-                    "intValue": "4096"
-                  }
-                },
-                {
-                  "key": "gen_ai.request.max_tokens",
-                  "value": {
-                    "intValue": "4096"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_010"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}}
               ],
-              "events": [],
-              "parentSpanId": "6d64b8a508555069"
+              "events": []
             },
             {
-              "traceId": "688c583692bf7f1ca5bae7eca607fbdf",
-              "spanId": "97750656e29b0406",
-              "name": "agent.parse",
-              "startTimeUnixNano": "1700000004200000000",
-              "endTimeUnixNano": "1700000004250000000",
-              "status": {
-                "code": 2,
-                "message": "JSON parse error: Unexpected end of input"
-              },
+              "traceId": "10101010101010101010101010101010",
+              "spanId": "1010000000000003",
+              "parentSpanId": "1010000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000003100000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "JSONDecodeError"
-                  }
-                },
-                {
-                  "key": "error.message",
-                  "value": {
-                    "stringValue": "JSON parse error: Unexpected end of input"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "input_token_count", "value": {"intValue": "10000"}},
+                {"key": "output_token_count", "value": {"intValue": "4096"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "max_tokens"}]}}},
+                {"key": "output.truncated", "value": {"boolValue": true}}
               ],
-              "events": [],
-              "parentSpanId": "6d64b8a508555069"
+              "events": []
+            },
+            {
+              "traceId": "10101010101010101010101010101010",
+              "spanId": "1010000000000004",
+              "parentSpanId": "1010000000000003",
+              "name": "tool_call",
+              "startTimeUnixNano": "1700000003200000000",
+              "endTimeUnixNano": "1700000005500000000",
+              "status": {"code": 2, "message": "JSONDecodeError: Unexpected end of JSON input"},
+              "attributes": [
+                {"key": "tool_call_id", "value": {"stringValue": "tc_010"}},
+                {"key": "function_name", "value": {"stringValue": "write_file"}},
+                {"key": "tool_type", "value": {"stringValue": "builtin"}},
+                {"key": "success", "value": {"boolValue": false}},
+                {"key": "error_type", "value": {"stringValue": "JSONDecodeError"}}
+              ],
+              "events": []
             }
           ]
         }

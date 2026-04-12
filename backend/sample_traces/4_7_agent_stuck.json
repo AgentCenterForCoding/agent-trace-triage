@@ -3,91 +3,44 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
-              "spanId": "7f67404c00b3609b",
-              "name": "agent.dispatch",
+              "traceId": "07070707070707070707070707070707",
+              "spanId": "0707000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
-              "endTimeUnixNano": "1700000060000000000",
-              "status": {
-                "code": 2,
-                "message": "TimeoutError: Agent dispatch exceeded 60s limit"
-              },
+              "endTimeUnixNano": "1700000300000000000",
+              "status": {"code": 2, "message": "Agent stuck in loop"},
               "attributes": [
-                {
-                  "key": "agent.state",
-                  "value": {
-                    "stringValue": "waiting"
-                  }
-                },
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "TimeoutError"
-                  }
-                }
+                {"key": "session.id", "value": {"stringValue": "sess_007"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_007"}}
               ],
               "events": []
             },
             {
-              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
-              "spanId": "a7d5ccc54fb75b53",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000003100000000",
-              "status": {
-                "code": 1
-              },
+              "traceId": "07070707070707070707070707070707",
+              "spanId": "0707000000000002",
+              "parentSpanId": "0707000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000299900000000",
+              "status": {"code": 2, "message": "LoopDetected: Agent exceeded 50 iterations without progress"},
               "attributes": [
-                {
-                  "key": "gen_ai.response.finish_reasons",
-                  "value": {
-                    "stringValue": "end_turn"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_007"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "turn_count", "value": {"intValue": "50"}},
+                {"key": "agent.state", "value": {"stringValue": "stuck"}},
+                {"key": "agent.loop_detected", "value": {"boolValue": true}}
               ],
-              "events": [],
-              "parentSpanId": "7f67404c00b3609b"
-            },
-            {
-              "traceId": "21a89028785b646b6bb567e95cbe3bc9",
-              "spanId": "b4d15dd370818335",
-              "name": "mcp.call",
-              "startTimeUnixNano": "1700000003500000000",
-              "endTimeUnixNano": "1700000005500000000",
-              "status": {
-                "code": 1
-              },
-              "attributes": [
-                {
-                  "key": "mcp.tool",
-                  "value": {
-                    "stringValue": "read_file"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "7f67404c00b3609b"
+              "events": []
             }
           ]
         }

@@ -12,7 +12,7 @@ from trace_parser import parse_otlp_json
 
 
 SAMPLE_DIR = Path(__file__).parent.parent / "sample_traces"
-RULES_PATH = Path(__file__).parent.parent / "rules.yaml"
+RULES_PATH = Path(__file__).parent.parent / "rules_v2.yaml"
 
 
 def load_sample(name: str) -> dict:

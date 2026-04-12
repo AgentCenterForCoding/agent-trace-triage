@@ -25,7 +25,7 @@ from trace_parser import parse_otlp_json
 from triage_engine import load_rules, triage_hybrid
 
 SAMPLE_DIR = Path(__file__).parent.parent / "sample_traces"
-RULES_PATH = Path(__file__).parent.parent / "rules.yaml"
+RULES_PATH = Path(__file__).parent.parent / "rules_v2.yaml"
 
 
 def _get_llm_config() -> LLMConfig:

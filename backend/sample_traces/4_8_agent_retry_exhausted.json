@@ -3,164 +3,58 @@
     {
       "resource": {
         "attributes": [
-          {
-            "key": "service.name",
-            "value": {
-              "stringValue": "opencode-agent"
-            }
-          },
-          {
-            "key": "service.version",
-            "value": {
-              "stringValue": "0.5.0"
-            }
-          }
+          {"key": "service.name", "value": {"stringValue": "opencode-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.0"}}
         ]
       },
       "scopeSpans": [
         {
-          "scope": {
-            "name": "agent-trace-triage-samples"
-          },
+          "scope": {"name": "opencode-trace-v2"},
           "spans": [
             {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "b1716851fb00c83f",
-              "name": "agent.dispatch",
+              "traceId": "08080808080808080808080808080808",
+              "spanId": "0808000000000001",
+              "name": "turn",
               "startTimeUnixNano": "1700000000000000000",
               "endTimeUnixNano": "1700000015000000000",
-              "status": {
-                "code": 2,
-                "message": "RetryExhausted: Max retries (3) exceeded"
-              },
-              "attributes": [],
+              "status": {"code": 2, "message": "Retry exhausted"},
+              "attributes": [
+                {"key": "session.id", "value": {"stringValue": "sess_008"}},
+                {"key": "prompt.id", "value": {"stringValue": "prompt_008"}}
+              ],
               "events": []
             },
             {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "952fe21705bcad69",
-              "name": "agent.retry",
-              "startTimeUnixNano": "1700000000100000000",
-              "endTimeUnixNano": "1700000004100000000",
-              "status": {
-                "code": 2,
-                "message": "Attempt 1 failed"
-              },
+              "traceId": "08080808080808080808080808080808",
+              "spanId": "0808000000000002",
+              "parentSpanId": "0808000000000001",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000050000000",
+              "endTimeUnixNano": "1700000014900000000",
+              "status": {"code": 2, "message": "RetryExhausted: Max retries (3) exceeded"},
               "attributes": [
-                {
-                  "key": "agent.retry.attempt",
-                  "value": {
-                    "intValue": "1"
-                  }
-                }
+                {"key": "agent_run_id", "value": {"stringValue": "run_008"}},
+                {"key": "agent_name", "value": {"stringValue": "coding_agent"}},
+                {"key": "terminate_reason", "value": {"stringValue": "error"}},
+                {"key": "turn_count", "value": {"intValue": "3"}},
+                {"key": "agent.retry_count", "value": {"intValue": "3"}},
+                {"key": "agent.max_retries", "value": {"intValue": "3"}}
               ],
-              "events": [],
-              "parentSpanId": "b1716851fb00c83f"
+              "events": []
             },
             {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "65ddfb90dd615ffa",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000000200000000",
-              "endTimeUnixNano": "1700000003200000000",
-              "status": {
-                "code": 2,
-                "message": "APIError: 503 Service Unavailable"
-              },
+              "traceId": "08080808080808080808080808080808",
+              "spanId": "0808000000000003",
+              "parentSpanId": "0808000000000002",
+              "name": "model_inference",
+              "startTimeUnixNano": "1700000012000000000",
+              "endTimeUnixNano": "1700000014000000000",
+              "status": {"code": 1},
               "attributes": [
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "APIError"
-                  }
-                }
+                {"key": "model", "value": {"stringValue": "claude-opus-4-6"}},
+                {"key": "finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
               ],
-              "events": [],
-              "parentSpanId": "952fe21705bcad69"
-            },
-            {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "d85793622c5548b5",
-              "name": "agent.retry",
-              "startTimeUnixNano": "1700000004500000000",
-              "endTimeUnixNano": "1700000008500000000",
-              "status": {
-                "code": 2,
-                "message": "Attempt 2 failed"
-              },
-              "attributes": [
-                {
-                  "key": "agent.retry.attempt",
-                  "value": {
-                    "intValue": "2"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "b1716851fb00c83f"
-            },
-            {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "79ec9f9419fcc231",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000004600000000",
-              "endTimeUnixNano": "1700000007600000000",
-              "status": {
-                "code": 2,
-                "message": "APIError: 503 Service Unavailable"
-              },
-              "attributes": [
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "APIError"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "d85793622c5548b5"
-            },
-            {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "32a1d247bf06dd10",
-              "name": "agent.retry",
-              "startTimeUnixNano": "1700000009000000000",
-              "endTimeUnixNano": "1700000013000000000",
-              "status": {
-                "code": 2,
-                "message": "Attempt 3 failed"
-              },
-              "attributes": [
-                {
-                  "key": "agent.retry.attempt",
-                  "value": {
-                    "intValue": "3"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "b1716851fb00c83f"
-            },
-            {
-              "traceId": "7c2b7daaa071aa73ac0a239fd7882424",
-              "spanId": "470d25b3bfe22197",
-              "name": "gen_ai.client",
-              "startTimeUnixNano": "1700000009100000000",
-              "endTimeUnixNano": "1700000012100000000",
-              "status": {
-                "code": 2,
-                "message": "APIError: 503 Service Unavailable"
-              },
-              "attributes": [
-                {
-                  "key": "error.type",
-                  "value": {
-                    "stringValue": "APIError"
-                  }
-                }
-              ],
-              "events": [],
-              "parentSpanId": "32a1d247bf06dd10"
+              "events": []
             }
           ]
         }

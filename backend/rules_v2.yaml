@@ -31,6 +31,7 @@ rules:
       error_type: [RateLimitError, TimeoutError, APIError, ServerError, CancelledError]
     owner: model_team
     confidence: 0.9
+    reason: "Model API 调用失败（超时/限流/服务错误），需排查模型服务可用性"
 
   - name: model_content_filter
     description: "Model 安全策略拦截（非 ERROR 但实质失败）"
@@ -40,6 +41,7 @@ rules:
         finish_reasons: content_filter
     owner: model_team
     confidence: 0.9
+    reason: "Model 输出被安全策略拦截（content_filter），内容未生成"
 
   - name: model_content_filter_legacy
     description: "Model 安全策略拦截（legacy attribute）"
@@ -49,6 +51,7 @@ rules:
         gen_ai.response.finish_reasons: content_filter
     owner: model_team
     confidence: 0.9
+    reason: "Model 输出被安全策略拦截（content_filter），内容未生成"
 
   - name: model_max_tokens
     description: "Model 输出被截断"
@@ -58,6 +61,7 @@ rules:
         finish_reasons: max_tokens
     owner: model_team
     confidence: 0.7
+    reason: "Model 输出被截断（max_tokens），下游可能收到不完整数据"
 
   - name: model_max_tokens_legacy
     description: "Model 输出被截断（legacy attribute）"
@@ -67,6 +71,7 @@ rules:
         gen_ai.response.finish_reasons: max_tokens
     owner: model_team
     confidence: 0.7
+    reason: "Model 输出被截断（max_tokens），下游可能收到不完整数据"
 
   - name: model_truncation_cascade
     description: "Model 截断导致下游 JSON 解析失败"
@@ -92,7 +97,7 @@ rules:
         output.malformed: true
     owner: model_team
     confidence: 0.85
-    reason: "Model 输出格式不符合预期，无法解析"
+    reason: "Model 输出格式错误，下游无法解析"
 
   - name: model_bad_tool_params
     description: "Model 生成了不合规的工具参数导致 schema 校验失败"
@@ -142,6 +147,7 @@ rules:
         tool_type: mcp
     owner: mcp_team
     confidence: 0.9
+    reason: "MCP Server 连接失败，需检查 MCP 服务是否可达"
 
   - name: mcp_tool_error
     description: "MCP 工具执行失败（通用）"
@@ -152,6 +158,7 @@ rules:
         tool_type: mcp
     owner: mcp_team
     confidence: 0.7
+    reason: "MCP 工具执行失败，需排查 MCP 服务端日志"
 
   - name: mcp_tool_error_legacy
     description: "MCP 工具执行失败（legacy span naming）"
@@ -160,6 +167,7 @@ rules:
       status: ERROR
     owner: mcp_team
     confidence: 0.7
+    reason: "MCP 工具执行失败，需排查 MCP 服务端日志"
 
   # ============================================================
   # Skill layer rules (tool_call with tool_type=skill / skill.*)
@@ -175,6 +183,7 @@ rules:
         tool_type: skill
     owner: skill_team
     confidence: 0.9
+    reason: "Skill 加载失败（不存在或依赖缺失），需检查 Skill 注册配置"
 
   - name: skill_execute_error
     description: "Skill 业务逻辑执行失败"
@@ -185,6 +194,7 @@ rules:
         tool_type: skill
     owner: skill_team
     confidence: 0.7
+    reason: "Skill 业务逻辑执行失败，需排查 Skill 实现"
 
   - name: skill_execute_error_legacy
     description: "Skill 业务逻辑执行失败（legacy span naming）"
@@ -193,6 +203,7 @@ rules:
       status: ERROR
     owner: skill_team
     confidence: 0.7
+    reason: "Skill 业务逻辑执行失败，需排查 Skill 实现"
 
   # ============================================================
   # Agent layer rules (turn / agent_run / user_approval / agent.*)
@@ -265,6 +276,7 @@ rules:
       status: ERROR
     owner: agent_team
     confidence: 0.8
+    reason: "Agent 框架调度/状态管理出错"
 
   - name: agent_root_only_error
     description: "顶层失败但子 span 无错误——框架错误处理问题"

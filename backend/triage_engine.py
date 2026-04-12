@@ -420,7 +420,7 @@ def layer2_upstream_propagation(
         # Check: parent passed invalid input
         input_valid = parent.get_attr("mcp.tool.input_valid")
         if input_valid is False:
-            reasons.append(f"Parent span '{parent.name}' passed invalid input (mcp.tool.input_valid=false)")
+            reasons.append(f"父级 span '{parent.name}' 传入了无效输入 (mcp.tool.input_valid=false)")
             current = parent
             shifted = True
 
@@ -432,7 +432,7 @@ def layer2_upstream_propagation(
                 finish = sib.get_attr("gen_ai.response.finish_reasons") or sib.get_attr("finish_reasons")
                 if finish in ("max_tokens", ["max_tokens"]):
                     reasons.append(
-                        f"Sibling span '{sib.name}' had finish_reason=max_tokens (output truncated)"
+                        f"兄弟 span '{sib.name}' 的 finish_reason=max_tokens（输出被截断）"
                     )
                     current = sib
                     shifted = True
@@ -446,7 +446,7 @@ def layer2_upstream_propagation(
                 finish = anc.get_attr("gen_ai.response.finish_reasons") or anc.get_attr("finish_reasons")
                 if finish in ("max_tokens", ["max_tokens"]):
                     reasons.append(
-                        f"Ancestor span '{anc.name}' had finish_reason=max_tokens (output truncated)"
+                        f"祖先 span '{anc.name}' 的 finish_reason=max_tokens（输出被截断）"
                     )
                     current = anc
                     shifted = True
@@ -461,8 +461,8 @@ def layer2_upstream_propagation(
                     if current.duration_ms < agent_timeout * 2:
                         # MCP was still within reasonable time but Agent cancelled
                         reasons.append(
-                            f"Agent timeout ({agent_timeout}ms) may be too short for '{current.name}' "
-                            f"(ran {current.duration_ms:.0f}ms before cancel)"
+                            f"Agent 超时配置 ({agent_timeout}ms) 对于 '{current.name}' 可能过短"
+                            f"（执行 {current.duration_ms:.0f}ms 后被取消）"
                         )
                         current = parent
                         shifted = True
@@ -632,7 +632,7 @@ def triage(tree: SpanTree, rules: list[TriageRule]) -> TriageResult:
         return TriageResult(
             primary_owner=OwnerTeam.UNKNOWN,
             confidence=0.0,
-            root_cause="No error or anomaly detected in trace",
+            root_cause="Trace 中未检测到错误或异常",
         )
 
     is_anomaly = candidate.status.value != "ERROR"
@@ -658,7 +658,7 @@ def triage(tree: SpanTree, rules: list[TriageRule]) -> TriageResult:
                 confidence=confidence,
                 fault_span=root_cause_span,
                 fault_chain=fault_chain,
-                root_cause=rule.reason or f"Pattern detected: {rule.pattern_match.type}",
+                root_cause=rule.reason or f"检测到异常模式: {rule.pattern_match.type}",
                 action_items=_build_action_items(primary, all_co, root_cause_span, []),
             )
 
@@ -677,13 +677,13 @@ def triage(tree: SpanTree, rules: list[TriageRule]) -> TriageResult:
         primary = OwnerTeam(matched_rule.owner)
         rule_co = [OwnerTeam(co) for co in matched_rule.co_responsible]
         rule_confidence = matched_rule.confidence
-        reason_text = matched_rule.reason or f"Matched rule: {matched_rule.span_pattern}"
+        reason_text = matched_rule.reason or f"命中规则: {matched_rule.span_pattern}"
     else:
         effective_layer = get_effective_layer(root_cause_span)
         primary = layer_to_owner(effective_layer)
         rule_co = []
         rule_confidence = 0.6  # No matching rule → lower confidence
-        reason_text = f"No matching rule; attributed by span layer: {effective_layer.value}"
+        reason_text = f"未匹配到规则，按 span 所属层级归因: {effective_layer.value}"
 
     # Layer 3: Tolerance analysis
     tolerance_co = layer3_tolerance_analysis(root_cause_span, tree)
@@ -704,7 +704,7 @@ def triage(tree: SpanTree, rules: list[TriageRule]) -> TriageResult:
     # Build root cause description
     root_cause_desc = reason_text
     if upstream_reasons:
-        root_cause_desc += " | Upstream: " + "; ".join(upstream_reasons)
+        root_cause_desc += " | 上游传播: " + "; ".join(upstream_reasons)
 
     # Build action items
     action_items = _build_action_items(primary, all_co, root_cause_span, upstream_reasons)
@@ -729,16 +729,16 @@ def _build_action_items(
     """Generate actionable items for each responsible team."""
     items: list[str] = []
 
-    items.append(f"[{primary.value}] Investigate root cause in span '{fault_span.name}': {fault_span.status_message or 'see attributes'}")
+    items.append(f"[{primary.value}] 排查 span '{fault_span.name}' 的根因: {fault_span.status_message or '查看属性'}")
 
     for co in co_responsible:
         if co == OwnerTeam.AGENT_TEAM:
-            items.append(f"[{co.value}] Add error handling/retry/fallback for downstream failures")
+            items.append(f"[{co.value}] 为下游失败添加错误处理/重试/兜底机制")
         else:
-            items.append(f"[{co.value}] Review related span behavior")
+            items.append(f"[{co.value}] 审查相关 span 行为")
 
     if upstream_reasons:
-        items.append(f"[upstream] Root cause shifted due to: {'; '.join(upstream_reasons)}")
+        items.append(f"[upstream] 根因因上游传播发生偏移: {'; '.join(upstream_reasons)}")
 
     return items
 
