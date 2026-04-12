@@ -10,5 +10,3 @@ node_modules/
 .playwright-mcp/
 .idea/
 .claude/
-demo.gif
-gif_frames/
