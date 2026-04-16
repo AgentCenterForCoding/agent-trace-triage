@@ -1,0 +1,165 @@
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude" version="24.0.0">
+  <diagram id="capability-map" name="关键能力方案图">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- 标题 -->
+        <mxCell id="title" value="Agent Trace Triage · 关键能力方案图" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1F2937;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 业务活动层 ========== -->
+        <mxCell id="biz-band" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="1280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-label" value="业务活动&#xa;Business&#xa;Activities" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="160" width="100" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="biz-1" value="① Trace 采集&#xa;&#xa;OTel / OpenCode&#xa;运行时轨迹上报" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="120" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-2" value="② 故障定界&#xa;&#xa;四层归属&#xa;自动化判定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="430" y="120" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-3" value="③ 责任路由&#xa;&#xa;primary_owner&#xa;+ co_responsible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="660" y="120" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-4" value="④ 根因复盘&#xa;&#xa;证据链 · 瀑布图&#xa;Action Items" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="890" y="120" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-5" value="⑤ 场景回归&#xa;&#xa;40+ 样本&#xa;持续验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="120" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 业务活动间箭头 -->
+        <mxCell id="biz-e1" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="biz-1" target="biz-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-e2" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="biz-2" target="biz-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-e3" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="biz-3" target="biz-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="biz-e4" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=2;dashed=1;" edge="1" parent="1" source="biz-4" target="biz-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 规范层 ========== -->
+        <mxCell id="spec-band" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57F17;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="300" width="1280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="spec-label" value="规范&#xa;Standards&#xa;&amp; Specs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="70" y="370" width="100" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="spec-1" value="四层架构模型&#xa;&#xa;Agent / Model / MCP&#xa;Skill / User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#F57F17;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="330" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="spec-2" value="三层归因算法&#xa;&#xa;直接 → 上游&#xa;→ 容错缺失" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#F57F17;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="430" y="330" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="spec-3" value="双命名约定&#xa;&#xa;前缀式 (OTel)&#xa;+ OpenCode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#F57F17;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="660" y="330" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="spec-4" value="共同责任模型&#xa;&#xa;primary_owner&#xa;+ co_responsible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#F57F17;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="890" y="330" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="spec-5" value="YAML 规则规范&#xa;&#xa;可配置模式&#xa;证据字段契约" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#F57F17;fontSize=12;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="330" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ========== 工程能力层 ========== -->
+        <mxCell id="eng-band" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="510" width="1280" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-label" value="工程能力&#xa;Engineering&#xa;Capabilities" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="70" y="650" width="100" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- 工程能力 · 第一行 -->
+        <mxCell id="eng-1" value="Trace Parser&#xa;&#xa;• OTLP JSON 解析&#xa;• Span 树 / BFS 深度&#xa;• 孤儿 Span 容错&#xa;• 层级识别" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="200" y="540" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-2" value="L1 规则引擎&#xa;&#xa;• YAML 加载&#xa;• 模式匹配&#xa;• 确定性 &lt;100ms&#xa;• 证据链生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="430" y="540" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-3" value="L2 LLM Skill&#xa;&#xa;• Prompt 模板&#xa;• 泛化归因 1–5s&#xa;• httpx 代理&#xa;• 推理链返回" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="660" y="540" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-4" value="置信度路由器&#xa;&#xa;• L1 命中直出&#xa;• 低置信升级 L2&#xa;• 结果合并&#xa;• 模式检测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="890" y="540" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-5" value="Sample Store&#xa;&#xa;• 40+ 场景样本&#xa;• 回归基准&#xa;• 场景分类&#xa;• 快速加载" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="540" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- 工程能力 · 第二行 -->
+        <mxCell id="eng-6" value="REST API&#xa;&#xa;• upload / analyze&#xa;• samples&#xa;• llm/test-connection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="200" y="690" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-7" value="Web Dashboard&#xa;&#xa;• 上传 / 列表&#xa;• 瀑布图&#xa;• 证据 / Actions&#xa;• L2 设置面板" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="430" y="690" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-8" value="层级识别引擎&#xa;&#xa;• identify_span_layer&#xa;• get_effective_layer&#xa;• tool_type 分派" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="660" y="690" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-9" value="证据链生成器&#xa;&#xa;• span 引用&#xa;• 属性摘录&#xa;• 可追溯链路" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="890" y="690" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eng-10" value="治理 &amp; 测试&#xa;&#xa;• Cat Cafe 治理&#xa;• 样本回归测试&#xa;• OpenSpec 变更流" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=11;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="690" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 业务 → 规范 映射虚线 -->
+        <mxCell id="map-b1-s1" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="biz-1" target="spec-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-b2-s1" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="biz-2" target="spec-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-b2-s2" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="biz-2" target="spec-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-b3-s4" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="biz-3" target="spec-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-b4-s5" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="biz-4" target="spec-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 规范 → 工程 映射虚线 -->
+        <mxCell id="map-s1-e8" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-1" target="eng-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-s2-e2" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-2" target="eng-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-s2-e3" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-2" target="eng-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-s3-e1" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-3" target="eng-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-s4-e4" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-4" target="eng-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="map-s5-e2" style="endArrow=none;html=1;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" edge="1" parent="1" source="spec-5" target="eng-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 图例 -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="850" width="1280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-txt" value="图例：  ━━ 业务流向（实线箭头）    ┄┄ 层间映射（虚线）    蓝=业务活动  黄=规范  绿=工程能力" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#424242;" vertex="1" parent="1">
+          <mxGeometry x="60" y="850" width="1280" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

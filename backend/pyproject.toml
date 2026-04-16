@@ -1,23 +1,13 @@
 [project]
-name = "agent-trace-triage"
+name = "agent-trace-triage-backend"
 version = "0.1.0"
-description = "Agent Trace Triage Tool - OTel-based fault attribution"
+description = "Agent Trace Triage Backend - thin orchestration layer"
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.109.0",
-    "uvicorn>=0.27.0",
-    "pydantic>=2.5.0",
-    "pyyaml>=6.0.1",
-    "python-multipart>=0.0.6",
-    "anthropic>=0.18.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.0.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "httpx>=0.26.0",
-]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[project.scripts]
+serve = "uvicorn backend.main:app --host 0.0.0.0 --port 3014"

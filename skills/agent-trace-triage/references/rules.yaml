@@ -1,0 +1,218 @@
+# Agent Trace Triage Rules
+# 基于四层架构模型的故障归因规则集
+
+rules:
+  # ============================================================
+  # Model 层规则 (model_inference / llm.* / gen_ai.*)
+  # ============================================================
+
+  - name: model_api_error
+    description: "Model API 直接报错（超时、限流、服务错误）"
+    match:
+      span_pattern: "^(llm|gen_ai)\\.|^model_inference$"
+      status: ERROR
+      error_type: [RateLimitError, TimeoutError, APIError, ServerError, CancelledError]
+    owner: model_team
+    confidence: 0.9
+    reason: "Model API 调用失败（超时/限流/服务错误），需排查模型服务可用性"
+
+  - name: model_content_filter
+    description: "Model 安全策略拦截（非 ERROR 但实质失败）"
+    match:
+      span_pattern: "^(llm|gen_ai)\\.|^model_inference$"
+      attribute:
+        finish_reasons: content_filter
+    owner: model_team
+    confidence: 0.9
+    reason: "Model 输出被安全策略拦截（content_filter），内容未生成"
+
+  - name: model_max_tokens
+    description: "Model 输出被截断"
+    match:
+      span_pattern: "^(llm|gen_ai)\\.|^model_inference$"
+      attribute:
+        finish_reasons: max_tokens
+    owner: model_team
+    confidence: 0.7
+    reason: "Model 输出被截断（max_tokens），下游可能收到不完整数据"
+
+  - name: model_truncation_cascade
+    description: "Model 截断导致下游 JSON 解析失败"
+    match:
+      span_pattern: "^agent\\.|^(turn|agent_run)$"
+      status: ERROR
+      error_contains: "parse|JSON|format|decode"
+    cross_span:
+      - relation: sibling
+        span_pattern: "^(llm|gen_ai)\\.|^model_inference$"
+        attribute:
+          finish_reasons: max_tokens
+    owner: model_team
+    co_responsible: [agent_team]
+    confidence: 0.85
+    reason: "Model 输出截断导致下游 JSON 解析失败，Agent 缺少截断容错"
+
+  - name: model_bad_tool_params
+    description: "Model 生成了不合规的工具参数"
+    match:
+      span_pattern: "^tool_call$"
+      status: ERROR
+      error_type: [TypeError, ValidationError]
+      attribute:
+        input_valid: false
+    cross_span:
+      - relation: parent
+        span_pattern: "^model_inference$"
+        attribute:
+          output.tool_params_valid: false
+    owner: model_team
+    co_responsible: [agent_team]
+    confidence: 0.85
+    reason: "Model 生成了不合规的工具参数"
+
+  # ============================================================
+  # MCP 层规则 (tool_call with tool_type=mcp / mcp.*)
+  # ============================================================
+
+  - name: mcp_connection_error
+    description: "MCP Server 连接失败"
+    match:
+      span_pattern: "^mcp\\.|^tool_call$"
+      status: ERROR
+      error_type: [ConnectionError, ConnectionRefusedError]
+      attribute:
+        tool_type: mcp
+    owner: mcp_team
+    confidence: 0.9
+    reason: "MCP Server 连接失败，需检查 MCP 服务是否可达"
+
+  - name: mcp_tool_error
+    description: "MCP 工具执行失败"
+    match:
+      span_pattern: "^mcp\\.|^tool_call$"
+      status: ERROR
+      attribute:
+        tool_type: mcp
+    owner: mcp_team
+    confidence: 0.7
+    reason: "MCP 工具执行失败，需排查 MCP 服务端日志"
+
+  - name: mcp_semantic_error
+    description: "MCP 工具响应 OK 但包含业务错误"
+    match:
+      span_pattern: "^tool_call$"
+      status: OK
+      attribute:
+        mcp.response.has_error: true
+        tool_type: mcp
+    owner: mcp_team
+    confidence: 0.7
+    reason: "MCP 工具响应结构正确但内容包含错误信息"
+
+  # ============================================================
+  # Skill 层规则 (tool_call with tool_type=skill / skill.*)
+  # ============================================================
+
+  - name: skill_load_error
+    description: "Skill 加载失败"
+    match:
+      span_pattern: "^skill\\.|^tool_call$"
+      status: ERROR
+      error_type: [SkillNotFoundError]
+      attribute:
+        tool_type: skill
+    owner: skill_team
+    confidence: 0.9
+    reason: "Skill 加载失败（不存在或依赖缺失）"
+
+  - name: skill_execute_error
+    description: "Skill 业务逻辑执行失败"
+    match:
+      span_pattern: "^skill\\.|^tool_call$"
+      status: ERROR
+      attribute:
+        tool_type: skill
+    owner: skill_team
+    confidence: 0.7
+    reason: "Skill 业务逻辑执行失败，需排查 Skill 实现"
+
+  # ============================================================
+  # Agent 层规则 (turn / agent_run / agent.*)
+  # ============================================================
+
+  - name: agent_loop_detected
+    description: "Agent 陷入死循环"
+    match:
+      span_pattern: "^agent\\.|^(turn|agent_run)$"
+      status: ERROR
+      attribute:
+        agent.loop_detected: true
+    owner: agent_team
+    confidence: 0.9
+    reason: "Agent 陷入死循环，需实现循环断路器"
+
+  - name: agent_retry_exhausted
+    description: "Agent 重试耗尽"
+    match:
+      span_pattern: "^agent\\.|^(turn|agent_run)$"
+      status: ERROR
+      error_contains: "Retry|retry|exhausted"
+    owner: agent_team
+    confidence: 0.9
+    reason: "Agent 重试策略耗尽"
+
+  - name: agent_timeout_config
+    description: "Agent 超时配置问题"
+    match:
+      span_pattern: "^agent\\.|^(turn|agent_run)$"
+      status: ERROR
+      attribute:
+        terminate_reason: timeout
+    owner: agent_team
+    confidence: 0.85
+    reason: "Agent 超时配置可能过短"
+
+  - name: agent_state_error
+    description: "Agent 状态机/调度错误"
+    match:
+      span_pattern: "^agent\\.|^(turn|agent_run)$"
+      status: ERROR
+    owner: agent_team
+    confidence: 0.8
+    reason: "Agent 框架调度/状态管理出错"
+
+  - name: agent_root_only_error
+    description: "顶层失败但子 span 无错误"
+    match:
+      root_span_error: true
+      no_child_error: true
+    owner: agent_team
+    confidence: 0.7
+    reason: "顶层失败但所有子 span 正常，疑似框架错误处理问题"
+
+  # ============================================================
+  # 特殊模式检测规则
+  # ============================================================
+
+  - name: model_tool_loop
+    description: "Model 陷入 tool_use 死循环"
+    pattern_match:
+      type: repetition
+      span_pattern: "^(llm|gen_ai)\\.|^model_inference$"
+      min_count: 5
+      check_attribute: function_name
+    owner: model_team
+    co_responsible: [agent_team]
+    confidence: 0.8
+    reason: "Model 重复调用同一工具 5+ 次，Agent 缺少循环断路器"
+
+  - name: agent_swallowed_error
+    description: "Agent 静默吞掉子 span 错误"
+    pattern_match:
+      type: swallowed_error
+      parent_pattern: "^agent\\.|^(turn|agent_run)$"
+      parent_status: OK
+      child_has_error: true
+    owner: agent_team
+    confidence: 0.75
+    reason: "Agent 层 span 状态 OK 但存在子 span 错误，可能静默吞掉了错误"
