@@ -1,0 +1,77 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_e2",
+              "spanId": "trace_e2_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000002000000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_e2",
+              "spanId": "trace_e2_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000001900000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_e2_root"
+            },
+            {
+              "traceId": "trace_e2",
+              "spanId": "trace_e2_s1",
+              "name": "search_docs",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000001000000000",
+              "status": {
+                "code": "OK",
+                "message": "search_docs OK"
+              },
+              "attributes": [
+                {
+                  "key": "query",
+                  "value": {
+                    "stringValue": "postgres index types"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_e2_agent"
+            },
+            {
+              "traceId": "trace_e2",
+              "spanId": "trace_e2_s2",
+              "name": "answer_query",
+              "startTimeUnixNano": "1700000001100000000",
+              "endTimeUnixNano": "1700000001800000000",
+              "status": {
+                "code": "OK",
+                "message": "answer_query OK"
+              },
+              "attributes": [
+                {
+                  "key": "topic",
+                  "value": {
+                    "stringValue": "postgres index types"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_e2_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

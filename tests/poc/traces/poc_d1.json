@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_d1",
+              "spanId": "trace_d1_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000003000000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_d1",
+              "spanId": "trace_d1_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000002900000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_d1_root"
+            },
+            {
+              "traceId": "trace_d1",
+              "spanId": "trace_d1_s1",
+              "name": "edit_file",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000000600000000",
+              "status": {
+                "code": "OK",
+                "message": "edit_file OK"
+              },
+              "attributes": [
+                {
+                  "key": "path",
+                  "value": {
+                    "stringValue": "scripts/deploy.sh"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_d1_agent"
+            },
+            {
+              "traceId": "trace_d1",
+              "spanId": "trace_d1_s2",
+              "name": "git_commit",
+              "startTimeUnixNano": "1700000000700000000",
+              "endTimeUnixNano": "1700000001000000000",
+              "status": {
+                "code": "OK",
+                "message": "git_commit OK"
+              },
+              "attributes": [
+                {
+                  "key": "message",
+                  "value": {
+                    "stringValue": "bump version"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_d1_agent"
+            },
+            {
+              "traceId": "trace_d1",
+              "spanId": "trace_d1_s3",
+              "name": "git_push",
+              "startTimeUnixNano": "1700000001100000000",
+              "endTimeUnixNano": "1700000001600000000",
+              "status": {
+                "code": "OK",
+                "message": "git_push OK"
+              },
+              "attributes": [
+                {
+                  "key": "remote",
+                  "value": {
+                    "stringValue": "origin"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_d1_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

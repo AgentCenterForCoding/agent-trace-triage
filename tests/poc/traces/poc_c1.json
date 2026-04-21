@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_c1",
+              "spanId": "trace_c1_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000004000000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_c1",
+              "spanId": "trace_c1_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000003900000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_c1_root"
+            },
+            {
+              "traceId": "trace_c1",
+              "spanId": "trace_c1_s1",
+              "name": "lint",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000000900000000",
+              "status": {
+                "code": "OK",
+                "message": "lint OK"
+              },
+              "attributes": [
+                {
+                  "key": "scope",
+                  "value": {
+                    "stringValue": "backend/**"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_c1_agent"
+            },
+            {
+              "traceId": "trace_c1",
+              "spanId": "trace_c1_s2",
+              "name": "format_code",
+              "startTimeUnixNano": "1700000001000000000",
+              "endTimeUnixNano": "1700000001600000000",
+              "status": {
+                "code": "OK",
+                "message": "format_code OK"
+              },
+              "attributes": [
+                {
+                  "key": "scope",
+                  "value": {
+                    "stringValue": "backend/**"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_c1_agent"
+            },
+            {
+              "traceId": "trace_c1",
+              "spanId": "trace_c1_s3",
+              "name": "git_commit",
+              "startTimeUnixNano": "1700000001700000000",
+              "endTimeUnixNano": "1700000002100000000",
+              "status": {
+                "code": "OK",
+                "message": "git_commit OK"
+              },
+              "attributes": [
+                {
+                  "key": "message",
+                  "value": {
+                    "stringValue": "style cleanup"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_c1_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000003500000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000003400000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_g1_root"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n0",
+              "name": "noop_0",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000000400000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_0 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_0"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n1",
+              "name": "noop_1",
+              "startTimeUnixNano": "1700000000500000000",
+              "endTimeUnixNano": "1700000000700000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_1 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_1"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n2",
+              "name": "noop_2",
+              "startTimeUnixNano": "1700000000800000000",
+              "endTimeUnixNano": "1700000001000000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_2 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_2"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n3",
+              "name": "noop_3",
+              "startTimeUnixNano": "1700000001100000000",
+              "endTimeUnixNano": "1700000001300000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_3 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_3"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n4",
+              "name": "noop_4",
+              "startTimeUnixNano": "1700000001400000000",
+              "endTimeUnixNano": "1700000001600000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_4 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_4"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            },
+            {
+              "traceId": "trace_g1",
+              "spanId": "trace_g1_n5",
+              "name": "noop_5",
+              "startTimeUnixNano": "1700000001700000000",
+              "endTimeUnixNano": "1700000001900000000",
+              "status": {
+                "code": "OK",
+                "message": "noop_5 OK"
+              },
+              "attributes": [
+                {
+                  "key": "info",
+                  "value": {
+                    "stringValue": "noise_5"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_g1_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

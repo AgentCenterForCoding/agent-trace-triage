@@ -13,7 +13,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from fastapi import APIRouter
-from routes import triage, samples, settings
+from routes import triage, samples, settings, sops
 from services.storage import get_settings
 
 
@@ -69,6 +69,7 @@ app.include_router(health_router, prefix="/api")
 app.include_router(triage.router, prefix="/api/v1", tags=["triage"])
 app.include_router(samples.router, prefix="/api/v1", tags=["samples"])
 app.include_router(settings.router, prefix="/api/v1", tags=["settings"])
+app.include_router(sops.router, prefix="/api/v1", tags=["sops"])
 
 # Static file hosting must be LAST — mount("/") is a catch-all.
 UI_DIST_PATH = Path(__file__).parent.parent / "ui" / "dist"

@@ -1,0 +1,58 @@
+{
+  "traces_total": 20,
+  "sops_in_registry": 50,
+  "sops_enabled": 47,
+  "sops_flagged": 3,
+  "induction": {
+    "produced": 17,
+    "dropped_schema": 0,
+    "dropped_hallucination": 2,
+    "dropped_failed_step": 1,
+    "flagged_risky": 1
+  },
+  "score": {
+    "precision": 1.0,
+    "recall": 0.8888888888888888,
+    "f1": 0.9411764705882353,
+    "tp": 16,
+    "fp": 0,
+    "fn": 2,
+    "tn": 2
+  },
+  "per_trace": {
+    "trace_a1": "TP",
+    "trace_a2": "TP",
+    "trace_a3": "FN",
+    "trace_a4": "TP",
+    "trace_a5": "TP",
+    "trace_a6": "TP",
+    "trace_b1": "TP",
+    "trace_b2": "FN",
+    "trace_b3": "TP",
+    "trace_b4": "TP",
+    "trace_c1": "TP",
+    "trace_c2": "TP",
+    "trace_c3": "TP",
+    "trace_d1": "TP",
+    "trace_d2": "TP",
+    "trace_d3": "TP",
+    "trace_e1": "TP",
+    "trace_e2": "TP",
+    "trace_f1": "TN",
+    "trace_g1": "TN"
+  },
+  "latency": {
+    "p50_ms": 77.59,
+    "p99_ms": 90.33,
+    "mean_ms": 78.68,
+    "max_ms": 103.32,
+    "runs": 30
+  },
+  "gate": {
+    "f1_ge_0_75": true,
+    "p99_lt_200ms": true,
+    "hallucination_dropped": true,
+    "failed_step_dropped": true,
+    "risky_flagged": true
+  }
+}

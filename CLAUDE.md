@@ -28,3 +28,7 @@
 - Feature lifecycle: kickoff → discussion → implementation → review → completion
 - SOP: See docs/SOP.md for the 6-step workflow
 <!-- CAT-CAFE-GOVERNANCE-END -->
+
+## Project Notes
+
+- SOP pipeline: 抽取 + registry + Hook CLI 通过 `/api/v1/sops/*` API 访问；存储 `backend/data/sops/<user>/` 是后端内部实现，不对外暴露。详见 `docs/sop-pipeline.md`。

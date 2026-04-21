@@ -1,0 +1,22 @@
+{
+  "trace_a1": ["edit_file", "git_commit", "create_mr"],
+  "trace_a2": ["edit_file", "git_commit", "create_mr"],
+  "trace_a3": ["edit_file", "git_commit", "create_mr"],
+  "trace_a4": ["edit_file", "git_commit", "create_mr"],
+  "trace_a5": ["edit_file", "git_commit", "create_mr"],
+  "trace_a6": ["edit_file", "git_commit", "create_mr"],
+  "trace_b1": ["run_tests", "edit_file", "git_commit", "create_mr"],
+  "trace_b2": ["run_tests", "edit_file", "git_commit", "create_mr"],
+  "trace_b3": ["run_tests", "edit_file", "git_commit", "create_mr"],
+  "trace_b4": ["run_tests", "edit_file", "git_commit", "create_mr"],
+  "trace_c1": ["lint", "format_code", "git_commit"],
+  "trace_c2": ["lint", "format_code", "git_commit"],
+  "trace_c3": ["lint", "format_code", "git_commit"],
+  "trace_d1": ["edit_file", "git_commit", "git_push"],
+  "trace_d2": ["edit_file", "git_commit", "git_push"],
+  "trace_d3": ["edit_file", "git_commit", "git_push"],
+  "trace_e1": ["search_docs", "answer_query"],
+  "trace_e2": ["search_docs", "answer_query"],
+  "trace_f1": [],
+  "trace_g1": []
+}

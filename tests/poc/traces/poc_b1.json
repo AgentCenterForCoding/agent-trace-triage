@@ -1,0 +1,117 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000009000000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000008900000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_b1_root"
+            },
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_s1",
+              "name": "run_tests",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000002200000000",
+              "status": {
+                "code": "OK",
+                "message": "run_tests OK"
+              },
+              "attributes": [
+                {
+                  "key": "path",
+                  "value": {
+                    "stringValue": "tests/login"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_b1_agent"
+            },
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_s2",
+              "name": "edit_file",
+              "startTimeUnixNano": "1700000002300000000",
+              "endTimeUnixNano": "1700000002800000000",
+              "status": {
+                "code": "OK",
+                "message": "edit_file OK"
+              },
+              "attributes": [
+                {
+                  "key": "path",
+                  "value": {
+                    "stringValue": "src/login.py"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_b1_agent"
+            },
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_s3",
+              "name": "git_commit",
+              "startTimeUnixNano": "1700000002900000000",
+              "endTimeUnixNano": "1700000003300000000",
+              "status": {
+                "code": "OK",
+                "message": "git_commit OK"
+              },
+              "attributes": [
+                {
+                  "key": "message",
+                  "value": {
+                    "stringValue": "fix login null"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_b1_agent"
+            },
+            {
+              "traceId": "trace_b1",
+              "spanId": "trace_b1_s4",
+              "name": "create_mr",
+              "startTimeUnixNano": "1700000003400000000",
+              "endTimeUnixNano": "1700000004000000000",
+              "status": {
+                "code": "OK",
+                "message": "create_mr OK"
+              },
+              "attributes": [
+                {
+                  "key": "target",
+                  "value": {
+                    "stringValue": "fix/login"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_b1_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

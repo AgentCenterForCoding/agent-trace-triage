@@ -1,0 +1,97 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "traceId": "trace_a5",
+              "spanId": "trace_a5_root",
+              "name": "turn",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000005000000000",
+              "status": {
+                "code": "OK",
+                "message": "turn OK"
+              },
+              "attributes": []
+            },
+            {
+              "traceId": "trace_a5",
+              "spanId": "trace_a5_agent",
+              "name": "agent_run",
+              "startTimeUnixNano": "1700000000100000000",
+              "endTimeUnixNano": "1700000004900000000",
+              "status": {
+                "code": "OK",
+                "message": "agent_run OK"
+              },
+              "attributes": [],
+              "parentSpanId": "trace_a5_root"
+            },
+            {
+              "traceId": "trace_a5",
+              "spanId": "trace_a5_s1",
+              "name": "edit_file",
+              "startTimeUnixNano": "1700000000200000000",
+              "endTimeUnixNano": "1700000000800000000",
+              "status": {
+                "code": "OK",
+                "message": "edit_file OK"
+              },
+              "attributes": [
+                {
+                  "key": "path",
+                  "value": {
+                    "stringValue": "ui/App.tsx"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_a5_agent"
+            },
+            {
+              "traceId": "trace_a5",
+              "spanId": "trace_a5_s2",
+              "name": "git_commit",
+              "startTimeUnixNano": "1700000000900000000",
+              "endTimeUnixNano": "1700000001300000000",
+              "status": {
+                "code": "OK",
+                "message": "git_commit OK"
+              },
+              "attributes": [
+                {
+                  "key": "message",
+                  "value": {
+                    "stringValue": "fix layout jitter"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_a5_agent"
+            },
+            {
+              "traceId": "trace_a5",
+              "spanId": "trace_a5_s3",
+              "name": "create_mr",
+              "startTimeUnixNano": "1700000001400000000",
+              "endTimeUnixNano": "1700000002000000000",
+              "status": {
+                "code": "OK",
+                "message": "create_mr OK"
+              },
+              "attributes": [
+                {
+                  "key": "target",
+                  "value": {
+                    "stringValue": "fix/ui-layout"
+                  }
+                }
+              ],
+              "parentSpanId": "trace_a5_agent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
