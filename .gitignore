@@ -9,4 +9,7 @@ build/
 node_modules/
 .playwright-mcp/
 .idea/
-.claude/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/trace-user-persona/
