@@ -13,3 +13,4 @@ node_modules/
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/trace-user-persona/
+!.claude/skills/brownfield-design-discovery/
